@@ -1,0 +1,3 @@
+* Make MnemonicTranslatorImpl private static final
+* Remove sorting logic in getDestinationBits by adding unsorted keys to map built by buildDestinationBitsBySpec
+* Add keys for reverse ordering of commutative operations. Ex: D+M is mapped, but M+D isn't. M+D should have the same value as D+M
