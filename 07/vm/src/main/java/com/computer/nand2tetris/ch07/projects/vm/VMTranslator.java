@@ -6,7 +6,7 @@ import java.io.BufferedWriter;
 /**
  * Created by jpiyush on 3/21/17.
  */
-public class VMTranslator {
+class VMTranslator {
     public VMTranslator(BufferedWriter writer) {
     }
 
