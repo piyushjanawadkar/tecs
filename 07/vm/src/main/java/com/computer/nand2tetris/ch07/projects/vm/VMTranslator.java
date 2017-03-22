@@ -35,4 +35,8 @@ class VMTranslator {
             throw new IllegalArgumentException(e);
         }
     }
+
+    public void done() throws IOException {
+        writer.close();
+    }
 }

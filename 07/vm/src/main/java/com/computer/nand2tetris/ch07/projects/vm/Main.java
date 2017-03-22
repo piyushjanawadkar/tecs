@@ -17,6 +17,7 @@ public class Main {
                 new LineParser(),
                 new ASMGenerator());
         translator.translate(createReader(Iterables.getOnlyElement(ioPaths.inputPaths())));
+        translator.done();
     }
 
     private static BufferedReader createReader(String filePath) throws FileNotFoundException {
