@@ -7,6 +7,6 @@ import com.google.common.collect.ImmutableList;
  */
 class ASMGenerator {
     public ImmutableList<String> generate(ParsedLine parsedLine) {
-        return ImmutableList.of(parsedLine.line());
+        return ImmutableList.of(parsedLine.toString());
     }
 }

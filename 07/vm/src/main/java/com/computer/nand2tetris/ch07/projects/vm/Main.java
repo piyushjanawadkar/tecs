@@ -10,6 +10,8 @@ public class Main {
         IOPathsGenerator ioPathsGenerator = new IOPathsGenerator(args);
         IOPaths ioPaths = ioPathsGenerator.generate();
 
+        System.out.println(ioPaths);
+
         VMTranslator translator = new VMTranslator(
                 createWriter(ioPaths.outputPath()),
                 new LineParser(),
