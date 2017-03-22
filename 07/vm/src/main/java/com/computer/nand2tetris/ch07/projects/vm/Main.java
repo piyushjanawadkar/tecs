@@ -9,7 +9,11 @@ public class Main {
     public static void main(String[] args) throws IOException {
         IOPathsGenerator ioPathsGenerator = new IOPathsGenerator(args);
         IOPaths ioPaths = ioPathsGenerator.generate();
-        VMTranslator translator = new VMTranslator(createWriter(ioPaths.outputPath()));
+
+        VMTranslator translator = new VMTranslator(
+                createWriter(ioPaths.outputPath()),
+                new LineParser(),
+                new ASMGenerator());
         translator.translate(createReader(Iterables.getOnlyElement(ioPaths.inputPaths())));
     }
 
