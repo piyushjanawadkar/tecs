@@ -7,14 +7,13 @@ import com.google.common.collect.Iterables;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by jpiyush on 3/21/17.
  */
 class IOPathsGenerator {
-    private static final String VM_FILE_EXTENSION = "vm";
-    private static final String ASM_FILE_EXTENSION = "asm";
+    private static final String VM_FILE_EXTENSION = ".vm";
+    private static final String ASM_FILE_EXTENSION = ".asm";
 
     private static final FileFilter IS_VM_PATH = new FileFilter() {
 
@@ -23,45 +22,40 @@ class IOPathsGenerator {
         }
     };
 
-    private final String inputPath;
+    private final String inputLocation;
 
     public IOPathsGenerator(String[] args) {
-        inputPath = Iterables.getOnlyElement(Arrays.asList(args));
+        inputLocation = Iterables.getOnlyElement(Arrays.asList(args));
     }
 
     public IOPaths generate() {
-        return IOPaths.create(generateVmFiles(inputPath), generateOutputFile(inputPath));
+        return IOPaths.create(generateVmPaths(inputLocation), generateOutputPath(inputLocation));
     }
 
-    private static ImmutableList<String> generateVmFiles(String inputPath) {
-        File path = new File(inputPath);
+    private static ImmutableList<String> generateVmPaths(String inputLocation) {
+        File path = new File(inputLocation);
         if (!path.isDirectory()) {
             Preconditions.checkArgument(IS_VM_PATH.accept(path));
-            return ImmutableList.of(inputPath);
+            return ImmutableList.of(inputLocation);
         }
 
         File[] vmFiles = path.listFiles(IS_VM_PATH);
         return Arrays.stream(vmFiles).map(File::getAbsolutePath).collect(ImmutableList.toImmutableList());
     }
 
-    private String generateOutputFile(String inputPath) {
-        return stripOptionalSuffix(VM_FILE_EXTENSION) + ASM_FILE_EXTENSION;
+    private static String generateOutputPath(String inputLocation) {
+        if (!hasVMSuffix(inputLocation)) {
+            return inputLocation + ASM_FILE_EXTENSION;
+        }
+
+        return inputLocation.replaceFirst(getExtensionRegex(VM_FILE_EXTENSION), ASM_FILE_EXTENSION);
+    }
+
+    private static String getExtensionRegex(String extension) {
+        return extension + "$";
     }
 
     private static boolean hasVMSuffix(String path) {
-        return path.endsWith("." + VM_FILE_EXTENSION);
-    }
-
-    private String stripOptionalSuffix(String inputLocation) {
-        String asmExtension = getExtension(ASM_FILE_EXTENSION);
-        if (!hasVMSuffix(inputLocation)) {
-            return inputLocation + asmExtension;
-        }
-
-        return inputLocation.replaceFirst(getExtension(VM_FILE_EXTENSION) + "$", asmExtension);
-    }
-
-    private static String getExtension(String extension) {
-        return String.format(".%s", extension);
+        return path.endsWith(VM_FILE_EXTENSION);
     }
 }

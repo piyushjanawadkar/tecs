@@ -9,8 +9,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
         IOPathsGenerator ioPathsGenerator = new IOPathsGenerator(args);
         IOPaths ioPaths = ioPathsGenerator.generate();
-        VMTranslator translator = new VMTranslator(createWriter(ioPaths.outputAsmPath()));
-        translator.translate(createReader(Iterables.getOnlyElement(ioPaths.inputVmPaths())));
+        VMTranslator translator = new VMTranslator(createWriter(ioPaths.outputPath()));
+        translator.translate(createReader(Iterables.getOnlyElement(ioPaths.inputPaths())));
     }
 
     private static BufferedReader createReader(String filePath) throws FileNotFoundException {
