@@ -24,11 +24,11 @@ class IOPathsGenerator {
 
     private final String inputLocation;
 
-    public IOPathsGenerator(String[] args) {
+    IOPathsGenerator(String[] args) {
         inputLocation = Iterables.getOnlyElement(Arrays.asList(args));
     }
 
-    public IOPaths generate() {
+    IOPaths generate() {
         return IOPaths.create(generateVmPaths(inputLocation), generateOutputPath(inputLocation));
     }
 

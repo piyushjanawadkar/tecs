@@ -7,9 +7,9 @@ import java.io.BufferedWriter;
  * Created by jpiyush on 3/21/17.
  */
 class VMTranslator {
-    public VMTranslator(BufferedWriter writer) {
+    VMTranslator(BufferedWriter writer) {
     }
 
-    public void translate(BufferedReader reader) {
+    void translate(BufferedReader reader) {
     }
 }
