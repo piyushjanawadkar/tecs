@@ -40,18 +40,18 @@ class LineParser {
                     .build();
 
     ParsedLine parse(String line) {
-        System.err.println(line);
         line = preprocess(line);
-        System.err.println("\"" + line + "\"");
 
         if (line.isEmpty()) {
             return ParsedLine.create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent());
         }
 
-        return parseStatement(line, split(line));
+        return parseStatement(line);
     }
 
-    private ParsedLine parseStatement(String line, String[] terms) {
+    private static ParsedLine parseStatement(String line) {
+        String[] terms = split(line);
+
         String firstTerm = terms[0];
         ParsedLine.LineType command = lineTypeByTerm.get(firstTerm);
         Preconditions.checkNotNull(command, "Unknown command \"%s\" in \"%s\"", firstTerm, line);
@@ -64,7 +64,7 @@ class LineParser {
         return ParsedLine.create(line, command, parsedLocation);
     }
 
-    private ParsedLocation createParsedLocation(String[] terms) {
+    private static ParsedLocation createParsedLocation(String[] terms) {
         Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
         ParsedLocation.SegmentType segmentType = segmentTypeByTerm.get(terms[1]);
         int offset = Integer.parseInt(terms[2]);
