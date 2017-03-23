@@ -15,7 +15,7 @@ public class Main {
         VMTranslator translator = new VMTranslator(
                 createWriter(ioPaths.outputPath()),
                 new LineParser(),
-                new ASMGenerator());
+                new ASMTranslatorImpl());
         translator.translate(createReader(Iterables.getOnlyElement(ioPaths.inputPaths())));
         translator.done();
     }

@@ -10,18 +10,18 @@ import java.io.IOException;
 class VMTranslator {
     private final BufferedWriter writer;
     private final LineParser lineParser;
-    private final ASMGenerator asmGenerator;
+    private final ASMTranslator asmTranslator;
 
-    VMTranslator(BufferedWriter writer, LineParser lineParser, ASMGenerator asmGenerator) {
+    VMTranslator(BufferedWriter writer, LineParser lineParser, ASMTranslator asmTranslator) {
         this.writer = writer;
         this.lineParser = lineParser;
-        this.asmGenerator = asmGenerator;
+        this.asmTranslator = asmTranslator;
     }
 
     void translate(BufferedReader reader) {
         reader.lines()
                 .map(lineParser::parse)
-                .map(asmGenerator::generate)
+                .map(asmTranslator::translate)
                 .flatMap(l -> l.stream())
                 .forEach(this::writeAndFlush);
     }
