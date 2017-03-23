@@ -10,7 +10,6 @@ import java.util.stream.Stream;
  */
 public class PushASMTranslator implements ASMTranslator {
 
-    private static final String BLANK_ASM_LINE = "";
 
     private static final ImmutableList<String> PUSH_ASM_SEQUENCE =
             ImmutableList.of(
@@ -31,17 +30,10 @@ public class PushASMTranslator implements ASMTranslator {
 
     @Override
     public ImmutableList<String> translate(ParsedLine parsedLine) {
-        return format(parsedLine, concat(locationAsmGenerator.translate(parsedLine), PUSH_ASM_SEQUENCE));
+        return concat(locationAsmGenerator.translate(parsedLine), PUSH_ASM_SEQUENCE);
     }
 
-    private ImmutableList<String> format(ParsedLine parsedLine, Stream<String> sequence) {
-        return Streams.concat(
-                sequence,
-                Stream.of(BLANK_ASM_LINE))
-                .collect(ImmutableList.toImmutableList());
-    }
-
-    private Stream<String> concat(ImmutableList<String> first, ImmutableList<String> second) {
-        return Streams.concat(first.stream(), second.stream());
+    private ImmutableList<String> concat(ImmutableList<String> first, ImmutableList<String> second) {
+        return Streams.concat(first.stream(), second.stream()).collect(ImmutableList.toImmutableList());
     }
 }

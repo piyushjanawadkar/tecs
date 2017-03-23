@@ -14,11 +14,13 @@ public class ASMTranslatorImpl implements ASMTranslator {
 
     private static final LocationASMTranslator LOCATION_ASM_GENERATOR = new LocationASMTranslator();
 
+    private static final String BLANK_ASM_LINE = "";
+
     private static final ImmutableMap<ParsedLine.LineType, ASMTranslator> generatorsByType =
             ImmutableMap.<ParsedLine.LineType, ASMTranslator>builder()
                     .put(ParsedLine.LineType.COMMAND_PUSH, new PushASMTranslator(LOCATION_ASM_GENERATOR))
                     .put(ParsedLine.LineType.COMMAND_POP, new DummyASMTranslator())
-                    .put(ParsedLine.LineType.COMMAND_ADD, new DummyASMTranslator())
+                    .put(ParsedLine.LineType.COMMAND_ADD, new BinaryOpASMTranslator("+"))
                     .put(ParsedLine.LineType.COMMAND_SUB, new DummyASMTranslator())
                     .put(ParsedLine.LineType.COMMAND_NEG, new DummyASMTranslator())
                     .put(ParsedLine.LineType.COMMAND_AND, new DummyASMTranslator())
@@ -44,7 +46,8 @@ public class ASMTranslatorImpl implements ASMTranslator {
         String comment = String.format("// %s", parsedLine.line());
         return Streams.concat(
                 Stream.of(comment),
-                sequence.stream())
+                Streams.concat(
+                        sequence.stream(), Stream.of(BLANK_ASM_LINE)))
                 .collect(ImmutableList.toImmutableList());
     }
 }
