@@ -9,21 +9,6 @@ import com.google.common.base.Optional;
 @AutoValue
 abstract class ParsedLine {
 
-  static ParsedLine create(String line, ParsedLine.LineType type,
-      Optional<ParsedLocation> location) {
-    return new AutoValue_ParsedLine(line, type, location);
-  }
-
-  abstract String line();
-
-  abstract ParsedLine.LineType type();
-
-  abstract Optional<ParsedLocation> location();
-
-  public String toString() {
-    return String.format("%s: { %s, %s}", line(), type(), location());
-  }
-
   enum LineType {
     BLANK_LINE,
     COMMAND_PUSH,
@@ -38,4 +23,22 @@ abstract class ParsedLine {
     COMMAND_EQ,
     COMMAND_GT,
   }
+
+  static ParsedLine create(String line, ParsedLine.LineType type,
+      Optional<ParsedLocation> location, int index) {
+    return new AutoValue_ParsedLine(line, type, location, index);
+  }
+
+  abstract String line();
+
+  abstract ParsedLine.LineType type();
+
+  abstract Optional<ParsedLocation> location();
+
+  abstract int index();
+
+  public String toString() {
+    return String.format("%d) %s: { %s, %s}", index(), line(), type(), location());
+  }
+
 }

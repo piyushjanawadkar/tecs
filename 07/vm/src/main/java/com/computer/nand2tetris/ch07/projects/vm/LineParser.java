@@ -39,20 +39,7 @@ class LineParser {
           .put("constant", ParsedLocation.SegmentType.SEGMENT_CONSTANT)
           .build();
 
-  private static ParsedLine parseStatement(String line) {
-    String[] terms = split(line);
-
-    String firstTerm = terms[0];
-    ParsedLine.LineType command = lineTypeByTerm.get(firstTerm);
-    Preconditions.checkNotNull(command, "Unknown command \"%s\" in \"%s\"", firstTerm, line);
-
-    Optional<ParsedLocation> parsedLocation = Optional.absent();
-    if (firstTerm.equals(TERM_PUSH) || firstTerm.equals(TERM_POP)) {
-      parsedLocation = Optional.of(createParsedLocation(terms));
-    }
-
-    return ParsedLine.create(line, command, parsedLocation);
-  }
+  private int nextIndex = 0;
 
   private static ParsedLocation createParsedLocation(String[] terms) {
     Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
@@ -78,11 +65,27 @@ class LineParser {
     return line.substring(0, commentIndex);
   }
 
+  private ParsedLine parseStatement(String line) {
+    String[] terms = split(line);
+
+    String firstTerm = terms[0];
+    ParsedLine.LineType command = lineTypeByTerm.get(firstTerm);
+    Preconditions.checkNotNull(command, "Unknown command \"%s\" in \"%s\"", firstTerm, line);
+
+    Optional<ParsedLocation> parsedLocation = Optional.absent();
+    if (firstTerm.equals(TERM_PUSH) || firstTerm.equals(TERM_POP)) {
+      parsedLocation = Optional.of(createParsedLocation(terms));
+    }
+
+    return ParsedLine.create(line, command, parsedLocation, nextIndex++);
+  }
+
   ParsedLine parse(String line) {
     line = preprocess(line);
 
     if (line.isEmpty()) {
-      return ParsedLine.create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent());
+      return ParsedLine
+          .create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent(), nextIndex++);
     }
 
     return parseStatement(line);

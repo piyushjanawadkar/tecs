@@ -23,7 +23,7 @@ public class ASMTranslatorImpl implements ASMTranslator {
 
           "A=A-1   // D has popped element, A points to top",
 
-          "M=M%sD  // M has the output",
+          "M=M%sD   // M has the output",
 
           "D=A+1   // update SP",
           "@SP",
@@ -37,28 +37,37 @@ public class ASMTranslatorImpl implements ASMTranslator {
           "M=%sM"
       );
 
+  private static final String RELATIONAL_OP_VALUE_TRUE = "-1";
+  private static final String RELATIONAL_OP_VALUE_FALSE = "0";
+
   private static final ImmutableMap<ParsedLine.LineType, ASMTranslator> generatorsByType =
       ImmutableMap.<ParsedLine.LineType, ASMTranslator>builder()
           .put(ParsedLine.LineType.COMMAND_PUSH, new PushASMTranslator(LOCATION_ASM_GENERATOR))
           .put(ParsedLine.LineType.COMMAND_POP, new DummyASMTranslator())
 
           .put(ParsedLine.LineType.COMMAND_ADD,
-              new ArithmeticLogicOpASMTranslator(BINARY_OP_ASM_SEQUENCE, "+"))
+              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "+"))
           .put(ParsedLine.LineType.COMMAND_SUB,
-              new ArithmeticLogicOpASMTranslator(BINARY_OP_ASM_SEQUENCE, "-"))
+              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "-"))
           .put(ParsedLine.LineType.COMMAND_NEG,
-              new ArithmeticLogicOpASMTranslator(UNARY_OP_ASM_SEQUENCE, "-"))
+              new SubstituteValuesASMTranslator(UNARY_OP_ASM_SEQUENCE, "-"))
 
           .put(ParsedLine.LineType.COMMAND_AND,
-              new ArithmeticLogicOpASMTranslator(BINARY_OP_ASM_SEQUENCE, "&"))
+              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "&"))
           .put(ParsedLine.LineType.COMMAND_OR,
-              new ArithmeticLogicOpASMTranslator(BINARY_OP_ASM_SEQUENCE, "|"))
+              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "|"))
           .put(ParsedLine.LineType.COMMAND_NOT,
-              new ArithmeticLogicOpASMTranslator(UNARY_OP_ASM_SEQUENCE, "!"))
+              new SubstituteValuesASMTranslator(UNARY_OP_ASM_SEQUENCE, "!"))
 
-          .put(ParsedLine.LineType.COMMAND_LT, new DummyASMTranslator())
-          .put(ParsedLine.LineType.COMMAND_EQ, new DummyASMTranslator())
-          .put(ParsedLine.LineType.COMMAND_GT, new DummyASMTranslator())
+          .put(ParsedLine.LineType.COMMAND_LT,
+              new RelationalOpASMTranslator("JLT", RELATIONAL_OP_VALUE_TRUE,
+                  RELATIONAL_OP_VALUE_FALSE))
+          .put(ParsedLine.LineType.COMMAND_EQ,
+              new RelationalOpASMTranslator("JNE", RELATIONAL_OP_VALUE_FALSE,
+                  RELATIONAL_OP_VALUE_TRUE))
+          .put(ParsedLine.LineType.COMMAND_GT,
+              new RelationalOpASMTranslator("JGT", RELATIONAL_OP_VALUE_TRUE,
+                  RELATIONAL_OP_VALUE_FALSE))
           .build();
 
   private static ImmutableList<String> format(ParsedLine parsedLine,
