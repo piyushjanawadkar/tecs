@@ -7,19 +7,19 @@ import com.google.common.collect.ImmutableList;
  */
 public class ArithmeticLogicOpASMTranslator implements ASMTranslator {
 
-    private final String operator;
-    private final ImmutableList<String> asmSequence;
+  private final String operator;
+  private final ImmutableList<String> asmSequence;
 
-    public ArithmeticLogicOpASMTranslator(ImmutableList<String> asmSequence, String operator) {
-        this.operator = operator;
-        this.asmSequence = asmSequence;
-    }
+  public ArithmeticLogicOpASMTranslator(ImmutableList<String> asmSequence, String operator) {
+    this.operator = operator;
+    this.asmSequence = asmSequence;
+  }
 
-    @Override
-    public ImmutableList<String> translate(ParsedLine parsedLine) {
-        return asmSequence
-                .stream()
-                .map(s -> s.replace("%s", operator))
-                .collect(ImmutableList.toImmutableList());
-    }
+  @Override
+  public ImmutableList<String> translate(ParsedLine parsedLine) {
+    return asmSequence
+        .stream()
+        .map(s -> s.replace("%s", operator))
+        .collect(ImmutableList.toImmutableList());
+  }
 }

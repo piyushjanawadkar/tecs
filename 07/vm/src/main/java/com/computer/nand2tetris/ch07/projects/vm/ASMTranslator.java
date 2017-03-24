@@ -6,5 +6,6 @@ import com.google.common.collect.ImmutableList;
  * Created by jpiyush on 3/22/17.
  */
 interface ASMTranslator {
-    ImmutableList<String> translate(ParsedLine parsedLine);
+
+  ImmutableList<String> translate(ParsedLine parsedLine);
 }

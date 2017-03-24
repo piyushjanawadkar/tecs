@@ -8,25 +8,26 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 abstract class ParsedLocation {
 
-    enum SegmentType {
-        SEGMENT_ARGUMENT,
-        SEGMENT_THIS,
-        SEGMENT_THAT,
-        SEGMENT_POINTER,
-        SEGMENT_TEMP,
-        SEGMENT_STATIC,
-        SEGMENT_CONSTANT,
-        SEGMENT_LOCAL
-    }
+  static ParsedLocation create(SegmentType segmentType, int offset) {
+    return new AutoValue_ParsedLocation(segmentType, offset);
+  }
 
-    static ParsedLocation create(SegmentType segmentType, int offset) {
-        return new AutoValue_ParsedLocation(segmentType, offset);
-    }
+  abstract SegmentType segmentType();
 
-    abstract SegmentType segmentType();
-    abstract int offset();
+  abstract int offset();
 
-    public String toString() {
-        return String.format("%s[%d]", segmentType(), offset());
-    }
+  public String toString() {
+    return String.format("%s[%d]", segmentType(), offset());
+  }
+
+  enum SegmentType {
+    SEGMENT_ARGUMENT,
+    SEGMENT_THIS,
+    SEGMENT_THAT,
+    SEGMENT_POINTER,
+    SEGMENT_TEMP,
+    SEGMENT_STATIC,
+    SEGMENT_CONSTANT,
+    SEGMENT_LOCAL
+  }
 }
