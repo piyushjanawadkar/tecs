@@ -20,9 +20,9 @@ public class PushASMTranslator implements ASMTranslator {
       );
 
 
-  private final LocationASMTranslator locationAsmGenerator;
+  private final SegmentLocationASMTranslator locationAsmGenerator;
 
-  public PushASMTranslator(LocationASMTranslator locationAsmGenerator) {
+  public PushASMTranslator(SegmentLocationASMTranslator locationAsmGenerator) {
     this.locationAsmGenerator = locationAsmGenerator;
   }
 

@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  */
 public class ASMTranslatorImpl implements ASMTranslator {
 
-  private static final LocationASMTranslator LOCATION_ASM_GENERATOR = new LocationASMTranslator();
+  private static final SegmentLocationASMTranslator LOCATION_ASM_GENERATOR = new SegmentLocationASMTranslator();
 
   private static final String BLANK_ASM_LINE = "";
 
