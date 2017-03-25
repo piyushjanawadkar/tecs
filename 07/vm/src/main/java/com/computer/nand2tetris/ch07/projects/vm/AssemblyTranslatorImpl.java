@@ -9,9 +9,9 @@ import java.util.stream.Stream;
 /**
  * Created by jpiyush on 3/23/17.
  */
-public class ASMTranslatorImpl implements ASMTranslator {
+public class AssemblyTranslatorImpl implements AssemblyTranslator {
 
-  private static final SegmentLocationASMTranslator LOCATION_ASM_GENERATOR = new SegmentLocationASMTranslator();
+  private static final SegmentLocationAssemblyTranslator LOCATION_ASM_GENERATOR = new SegmentLocationAssemblyTranslator();
 
   private static final String BLANK_ASM_LINE = "";
 
@@ -37,36 +37,36 @@ public class ASMTranslatorImpl implements ASMTranslator {
           "M=%sM"
       );
 
-  private static final String RELATIONAL_OP_VALUE_TRUE = "-1";
-  private static final String RELATIONAL_OP_VALUE_FALSE = "0";
+  private static final int RELATIONAL_OP_VALUE_TRUE = -1;
+  private static final int RELATIONAL_OP_VALUE_FALSE = 0;
 
-  private static final ImmutableMap<ParsedLine.LineType, ASMTranslator> generatorsByType =
-      ImmutableMap.<ParsedLine.LineType, ASMTranslator>builder()
-          .put(ParsedLine.LineType.COMMAND_PUSH, new PushASMTranslator(LOCATION_ASM_GENERATOR))
-          .put(ParsedLine.LineType.COMMAND_POP, new DummyASMTranslator())
+  private static final ImmutableMap<ParsedLine.LineType, AssemblyTranslator> generatorsByType =
+      ImmutableMap.<ParsedLine.LineType, AssemblyTranslator>builder()
+          .put(ParsedLine.LineType.COMMAND_PUSH, new PushAssemblyTranslator(LOCATION_ASM_GENERATOR))
+          .put(ParsedLine.LineType.COMMAND_POP, new DummyAssemblyTranslator())
 
           .put(ParsedLine.LineType.COMMAND_ADD,
-              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "+"))
+              new SubstituteValuesAssemblyTranslator(BINARY_OP_ASM_SEQUENCE, "+"))
           .put(ParsedLine.LineType.COMMAND_SUB,
-              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "-"))
+              new SubstituteValuesAssemblyTranslator(BINARY_OP_ASM_SEQUENCE, "-"))
           .put(ParsedLine.LineType.COMMAND_NEG,
-              new SubstituteValuesASMTranslator(UNARY_OP_ASM_SEQUENCE, "-"))
+              new SubstituteValuesAssemblyTranslator(UNARY_OP_ASM_SEQUENCE, "-"))
 
           .put(ParsedLine.LineType.COMMAND_AND,
-              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "&"))
+              new SubstituteValuesAssemblyTranslator(BINARY_OP_ASM_SEQUENCE, "&"))
           .put(ParsedLine.LineType.COMMAND_OR,
-              new SubstituteValuesASMTranslator(BINARY_OP_ASM_SEQUENCE, "|"))
+              new SubstituteValuesAssemblyTranslator(BINARY_OP_ASM_SEQUENCE, "|"))
           .put(ParsedLine.LineType.COMMAND_NOT,
-              new SubstituteValuesASMTranslator(UNARY_OP_ASM_SEQUENCE, "!"))
+              new SubstituteValuesAssemblyTranslator(UNARY_OP_ASM_SEQUENCE, "!"))
 
           .put(ParsedLine.LineType.COMMAND_LT,
-              new RelationalOpASMTranslator("JLT", RELATIONAL_OP_VALUE_TRUE,
+              new RelationalOpAssemblyTranslator("JLT", RELATIONAL_OP_VALUE_TRUE,
                   RELATIONAL_OP_VALUE_FALSE))
           .put(ParsedLine.LineType.COMMAND_EQ,
-              new RelationalOpASMTranslator("JNE", RELATIONAL_OP_VALUE_FALSE,
+              new RelationalOpAssemblyTranslator("JNE", RELATIONAL_OP_VALUE_FALSE,
                   RELATIONAL_OP_VALUE_TRUE))
           .put(ParsedLine.LineType.COMMAND_GT,
-              new RelationalOpASMTranslator("JGT", RELATIONAL_OP_VALUE_TRUE,
+              new RelationalOpAssemblyTranslator("JGT", RELATIONAL_OP_VALUE_TRUE,
                   RELATIONAL_OP_VALUE_FALSE))
           .build();
 
@@ -86,7 +86,7 @@ public class ASMTranslatorImpl implements ASMTranslator {
       return ImmutableList.of();
     }
 
-    ASMTranslator generator = generatorsByType.get(parsedLine.type());
+    AssemblyTranslator generator = generatorsByType.get(parsedLine.type());
     Preconditions.checkNotNull(generator, "No generator found for %s", parsedLine.type());
     return format(parsedLine, generator.translate(parsedLine));
   }

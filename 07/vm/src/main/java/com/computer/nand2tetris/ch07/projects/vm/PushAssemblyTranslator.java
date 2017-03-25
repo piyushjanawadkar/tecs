@@ -6,7 +6,7 @@ import com.google.common.collect.Streams;
 /**
  * Created by jpiyush on 3/23/17.
  */
-public class PushASMTranslator implements ASMTranslator {
+public class PushAssemblyTranslator implements AssemblyTranslator {
 
 
   private static final ImmutableList<String> PUSH_ASM_SEQUENCE =
@@ -20,9 +20,9 @@ public class PushASMTranslator implements ASMTranslator {
       );
 
 
-  private final SegmentLocationASMTranslator locationAsmGenerator;
+  private final SegmentLocationAssemblyTranslator locationAsmGenerator;
 
-  public PushASMTranslator(SegmentLocationASMTranslator locationAsmGenerator) {
+  public PushAssemblyTranslator(SegmentLocationAssemblyTranslator locationAsmGenerator) {
     this.locationAsmGenerator = locationAsmGenerator;
   }
 

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Created by jpiyush on 3/24/17.
  */
-public class RelationalOpASMTranslator implements ASMTranslator {
+public class RelationalOpAssemblyTranslator implements AssemblyTranslator {
 
   private static final ImmutableList<String> RELATIONAL_OP_ASM_SEQUENCE = ImmutableList.of(
       "@SP",
@@ -34,16 +34,16 @@ public class RelationalOpASMTranslator implements ASMTranslator {
   );
 
   private final String jumpInstruction;
-  private final String consequentValue;
-  private final String alternateValue;
-  private final SubstituteValuesASMTranslator substitutor;
+  private final Integer consequentValue;
+  private final Integer alternateValue;
+  private final SubstituteValuesAssemblyTranslator substitutor;
 
-  public RelationalOpASMTranslator(String jumpInstruction, String consequentValue,
-      String alternateValue) {
+  public RelationalOpAssemblyTranslator(String jumpInstruction, Integer consequentValue,
+      Integer alternateValue) {
     this.jumpInstruction = jumpInstruction;
     this.consequentValue = consequentValue;
     this.alternateValue = alternateValue;
-    substitutor = new SubstituteValuesASMTranslator(RELATIONAL_OP_ASM_SEQUENCE,
+    substitutor = new SubstituteValuesAssemblyTranslator(RELATIONAL_OP_ASM_SEQUENCE,
         jumpInstruction.toLowerCase(), jumpInstruction, alternateValue,
         jumpInstruction.toLowerCase(), consequentValue);
   }

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Created by jpiyush on 3/23/17.
  */
-public class DummyASMTranslator implements ASMTranslator {
+public class DummyAssemblyTranslator implements AssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {

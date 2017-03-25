@@ -8,13 +8,14 @@ import java.io.IOException;
 /**
  * Created by jpiyush on 3/21/17.
  */
-class VMTranslator {
+class VirtualMachineTranslator {
 
   private final BufferedWriter writer;
   private final LineParser lineParser;
-  private final ASMTranslator asmTranslator;
+  private final AssemblyTranslator asmTranslator;
 
-  VMTranslator(BufferedWriter writer, LineParser lineParser, ASMTranslator asmTranslator) {
+  VirtualMachineTranslator(BufferedWriter writer, LineParser lineParser,
+      AssemblyTranslator asmTranslator) {
     this.writer = writer;
     this.lineParser = lineParser;
     this.asmTranslator = asmTranslator;

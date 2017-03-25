@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * Created by jpiyush on 3/24/17.
  */
-public class ConstantSegmentLocationASMTranslator implements LocationASMTranslator {
+public class ConstantSegmentLocationAssemblyTranslator implements LocationAssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLocation parsedLocation) {

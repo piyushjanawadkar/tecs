@@ -16,10 +16,10 @@ public class Main {
 
     System.out.println(ioPaths);
 
-    VMTranslator translator = new VMTranslator(
+    VirtualMachineTranslator translator = new VirtualMachineTranslator(
         createWriter(ioPaths.outputPath()),
         new LineParser(),
-        new ASMTranslatorImpl());
+        new AssemblyTranslatorImpl());
     translator.translate(createReader(Iterables.getOnlyElement(ioPaths.inputPaths())));
     translator.done();
   }
