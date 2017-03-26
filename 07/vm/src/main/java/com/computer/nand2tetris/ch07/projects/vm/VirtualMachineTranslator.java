@@ -12,6 +12,13 @@ import java.io.IOException;
  */
 class VirtualMachineTranslator {
 
+  private static final ImmutableList<String> TRAILING_ASM_INFINITE_LOOP = ImmutableList.of(
+      "// Trailing infinite loop",
+      "(End)",
+      "@End",
+      "0;JMP"
+  );
+
   private final BufferedWriter writer;
   private final LineParser lineParser;
   private final AssemblyTranslator asmTranslator;
@@ -46,6 +53,7 @@ class VirtualMachineTranslator {
   }
 
   public void done() throws IOException {
+    TRAILING_ASM_INFINITE_LOOP.stream().forEach(this::writeAndFlush);
     writer.close();
   }
 }

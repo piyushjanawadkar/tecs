@@ -33,7 +33,10 @@ public class SavePushValueToDTranslator implements AssemblyTranslator {
   private static final ImmutableMap<ParsedLocation.SegmentType, AssemblyTranslator> pushValueSaverBySegmentType =
       ImmutableMap.<ParsedLocation.SegmentType, AssemblyTranslator>builder()
 
-          .put(ParsedLocation.SegmentType.SEGMENT_CONSTANT, new SaveConstantValueToDTranslator(0))
+          .put(ParsedLocation.SegmentType.SEGMENT_CONSTANT,
+              new AssemblySequenceTranslator(
+                  new SaveConstantValueToATranslator(0),
+                  new EmitAssemblyTranslator(ImmutableList.of("D=A"))))
 
           .put(ParsedLocation.SegmentType.SEGMENT_STATIC,
               new AssemblySequenceTranslator(
@@ -61,10 +64,14 @@ public class SavePushValueToDTranslator implements AssemblyTranslator {
                   COPY_M_TO_D_ASM_TRANSLATOR))
 
           .put(ParsedLocation.SegmentType.SEGMENT_POINTER,
-              new SaveConstantValueToDTranslator(POINTER_BASE_ADDRESS))
+              new AssemblySequenceTranslator(
+                  new SaveConstantValueToATranslator(POINTER_BASE_ADDRESS),
+                  COPY_M_TO_D_ASM_TRANSLATOR))
 
           .put(ParsedLocation.SegmentType.SEGMENT_TEMP,
-              new SaveConstantValueToDTranslator(TEMP_BASE_ADDRESS))
+              new AssemblySequenceTranslator(
+                  new SaveConstantValueToATranslator(TEMP_BASE_ADDRESS),
+                  COPY_M_TO_D_ASM_TRANSLATOR))
 
           .build();
 
