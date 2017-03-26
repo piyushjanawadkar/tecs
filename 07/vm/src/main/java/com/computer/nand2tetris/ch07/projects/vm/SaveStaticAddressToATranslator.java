@@ -5,10 +5,11 @@ import com.google.common.collect.ImmutableList;
 /**
  * Created by jpiyush on 3/25/17.
  */
-public class SaveStaticValueToMTranslator implements AssemblyTranslator {
+public class SaveStaticAddressToATranslator implements AssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    return ImmutableList.of(StaticAddressGenerator.generate(parsedLine));
+    return ImmutableList.of(
+        String.format("@%s.%d", parsedLine.fileBaseName(), parsedLine.location().get().offset()));
   }
 }

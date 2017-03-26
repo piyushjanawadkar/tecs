@@ -27,26 +27,45 @@ import com.google.common.collect.ImmutableMap;
 //        )
 public class SavePushValueToDTranslator implements AssemblyTranslator {
 
-  private static final int POINTER_BASE_ADDRESS = 3;
-  private static final int TEMP_BASE_ADDRESS = 5;
+  private static final AssemblyTranslator COPY_M_TO_D_ASM_TRANSLATOR = new EmitAssemblyTranslator(
+      ImmutableList.of("D=M"));
 
   private static final ImmutableMap<ParsedLocation.SegmentType, AssemblyTranslator> pushValueSaverBySegmentType =
       ImmutableMap.<ParsedLocation.SegmentType, AssemblyTranslator>builder()
+
           .put(ParsedLocation.SegmentType.SEGMENT_CONSTANT, new SaveConstantValueToDTranslator(0))
+
           .put(ParsedLocation.SegmentType.SEGMENT_STATIC,
-              new CopyMToDTranslator(new SaveStaticValueToMTranslator()))
+              new AssemblySequenceTranslator(
+                  new SaveStaticAddressToATranslator(),
+                  COPY_M_TO_D_ASM_TRANSLATOR))
+
           .put(ParsedLocation.SegmentType.SEGMENT_LOCAL,
-              new CopyMToDTranslator(new SaveLocationTranslator("LCL", "A")))
+              new AssemblySequenceTranslator(
+                  new SaveLocationTranslator("LCL", "A"),
+                  COPY_M_TO_D_ASM_TRANSLATOR))
+
           .put(ParsedLocation.SegmentType.SEGMENT_ARGUMENT,
-              new CopyMToDTranslator(new SaveLocationTranslator("ARG", "A")))
+              new AssemblySequenceTranslator(
+                  new SaveLocationTranslator("ARG", "A"),
+                  COPY_M_TO_D_ASM_TRANSLATOR))
+
           .put(ParsedLocation.SegmentType.SEGMENT_THIS,
-              new CopyMToDTranslator(new SaveLocationTranslator("THIS", "A")))
+              new AssemblySequenceTranslator(
+                  new SaveLocationTranslator("THIS", "A"),
+                  COPY_M_TO_D_ASM_TRANSLATOR))
+
           .put(ParsedLocation.SegmentType.SEGMENT_THAT,
-              new CopyMToDTranslator(new SaveLocationTranslator("THAT", "A")))
+              new AssemblySequenceTranslator(
+                  new SaveLocationTranslator("THAT", "A"),
+                  COPY_M_TO_D_ASM_TRANSLATOR))
+
           .put(ParsedLocation.SegmentType.SEGMENT_POINTER,
               new SaveConstantValueToDTranslator(POINTER_BASE_ADDRESS))
+
           .put(ParsedLocation.SegmentType.SEGMENT_TEMP,
               new SaveConstantValueToDTranslator(TEMP_BASE_ADDRESS))
+
           .build();
 
   @Override

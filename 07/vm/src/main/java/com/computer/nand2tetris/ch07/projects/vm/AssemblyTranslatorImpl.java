@@ -11,8 +11,6 @@ import java.util.stream.Stream;
  */
 public class AssemblyTranslatorImpl implements AssemblyTranslator {
 
-  private static final SegmentLocationAssemblyTranslator LOCATION_ASM_GENERATOR = new SegmentLocationAssemblyTranslator();
-
   private static final String BLANK_ASM_LINE = "";
 
   private static final ImmutableList<String> BINARY_OP_ASM_SEQUENCE =
@@ -37,13 +35,27 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
           "M=%sM"
       );
 
+  private static final ImmutableList<String> PUSH_ASM_SEQUENCE =
+      ImmutableList.of(
+          "// push contents of D",
+          "@SP",
+          "A=M",
+          "M=D",
+          "@SP",
+          "M=M+1"
+      );
+
   private static final int RELATIONAL_OP_VALUE_TRUE = -1;
   private static final int RELATIONAL_OP_VALUE_FALSE = 0;
 
   private static final ImmutableMap<ParsedLine.LineType, AssemblyTranslator> generatorsByType =
       ImmutableMap.<ParsedLine.LineType, AssemblyTranslator>builder()
-          .put(ParsedLine.LineType.COMMAND_PUSH, new PushAssemblyTranslator(LOCATION_ASM_GENERATOR))
-          .put(ParsedLine.LineType.COMMAND_POP, new DummyAssemblyTranslator())
+          .put(ParsedLine.LineType.COMMAND_PUSH,
+              new AssemblySequenceTranslator(new SavePushValueToDTranslator(),
+                  new EmitAssemblyTranslator(PUSH_ASM_SEQUENCE)))
+          .put(ParsedLine.LineType.COMMAND_POP,
+              new AssemblySequenceTranslator(new SavePopValueToDAndAddressToATranslator(),
+                  new EmitAssemblyTranslator(ImmutableList.of("M=D"))))
 
           .put(ParsedLine.LineType.COMMAND_ADD,
               new SubstituteValuesAssemblyTranslator(BINARY_OP_ASM_SEQUENCE, "+"))

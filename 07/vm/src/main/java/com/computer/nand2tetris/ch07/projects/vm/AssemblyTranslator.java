@@ -7,5 +7,8 @@ import com.google.common.collect.ImmutableList;
  */
 interface AssemblyTranslator {
 
+  public static final int POINTER_BASE_ADDRESS = 3;
+  public static final int TEMP_BASE_ADDRESS = 5;
+
   ImmutableList<String> translate(ParsedLine parsedLine);
 }

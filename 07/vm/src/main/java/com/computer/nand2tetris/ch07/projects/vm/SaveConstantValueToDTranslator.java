@@ -15,7 +15,10 @@ public class SaveConstantValueToDTranslator implements AssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    int address = baseAddress + parsedLine.location().get().offset();
-    return ImmutableList.of("@" + address, "D=A");
+    AssemblyTranslator translator = new AssemblySequenceTranslator(
+        new SaveConstantValueToATranslator(baseAddress),
+        new EmitAssemblyTranslator(ImmutableList.of("D=A"))
+    );
+    return translator.translate(parsedLine);
   }
 }
