@@ -16,19 +16,12 @@ class IOPathsGenerator {
   private static final String ASM_FILE_EXTENSION = ".asm";
 
   private static final FileFilter IS_VM_PATH = new FileFilter() {
-
     public boolean accept(File path) {
       return hasVMSuffix(path.getName());
     }
   };
 
-  private final String inputLocation;
-
-  IOPathsGenerator(String[] args) {
-    inputLocation = Iterables.getOnlyElement(Arrays.asList(args));
-  }
-
-  private static ImmutableList<String> generateVmPaths(String inputLocation) {
+  private static ImmutableList<String> generateInputPaths(String inputLocation) {
     File path = new File(inputLocation);
     if (!path.isDirectory()) {
       Preconditions.checkArgument(IS_VM_PATH.accept(path));
@@ -45,7 +38,7 @@ class IOPathsGenerator {
       return inputLocation + ASM_FILE_EXTENSION;
     }
 
-    return inputLocation.replaceFirst(getExtensionRegex(VM_FILE_EXTENSION), ASM_FILE_EXTENSION);
+    return replaceExtension(inputLocation, VM_FILE_EXTENSION, ASM_FILE_EXTENSION);
   }
 
   private static String getExtensionRegex(String extension) {
@@ -56,7 +49,23 @@ class IOPathsGenerator {
     return path.endsWith(VM_FILE_EXTENSION);
   }
 
-  IOPaths generate() {
-    return IOPaths.create(generateVmPaths(inputLocation), generateOutputPath(inputLocation));
+  private static ImmutableList<InputFile> generateInputFiles(ImmutableList<String> inputPaths) {
+    return inputPaths.stream().map(p -> InputFile.create(p, extractFileBaseName(p))).collect(
+        ImmutableList.toImmutableList());
+  }
+
+  private static String extractFileBaseName(String path) {
+    String fileName = new File(path).getName();
+    return replaceExtension(fileName, VM_FILE_EXTENSION, "");
+  }
+
+  private static String replaceExtension(String path, String oldExtension, String newExtension) {
+    return path.replaceFirst(getExtensionRegex(oldExtension), newExtension);
+  }
+
+  IOPaths generate(String[] args) {
+    String inputLocation = Iterables.getOnlyElement(Arrays.asList(args));
+    ImmutableList<InputFile> inputFiles = generateInputFiles(generateInputPaths(inputLocation));
+    return IOPaths.create(inputFiles, generateOutputPath(inputLocation));
   }
 }

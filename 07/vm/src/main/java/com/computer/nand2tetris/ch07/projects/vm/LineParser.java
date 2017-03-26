@@ -65,7 +65,7 @@ class LineParser {
     return line.substring(0, commentIndex);
   }
 
-  private ParsedLine parseStatement(String line) {
+  private ParsedLine parseStatement(String line, String fileBaseName) {
     String[] terms = split(line);
 
     String firstTerm = terms[0];
@@ -77,17 +77,18 @@ class LineParser {
       parsedLocation = Optional.of(createParsedLocation(terms));
     }
 
-    return ParsedLine.create(line, command, parsedLocation, nextIndex++);
+    return ParsedLine.create(line, command, parsedLocation, nextIndex++, fileBaseName);
   }
 
-  ParsedLine parse(String line) {
+  ParsedLine parse(String line, String fileBaseName) {
     line = preprocess(line);
 
     if (line.isEmpty()) {
       return ParsedLine
-          .create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent(), nextIndex++);
+          .create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent(), nextIndex++,
+              fileBaseName);
     }
 
-    return parseStatement(line);
+    return parseStatement(line, fileBaseName);
   }
 }

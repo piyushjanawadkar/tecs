@@ -11,8 +11,8 @@ import java.io.IOException;
 public class Main {
 
   public static void main(String[] args) throws IOException {
-    IOPathsGenerator ioPathsGenerator = new IOPathsGenerator(args);
-    IOPaths ioPaths = ioPathsGenerator.generate();
+    IOPathsGenerator ioPathsGenerator = new IOPathsGenerator();
+    IOPaths ioPaths = ioPathsGenerator.generate(args);
 
     System.out.println(ioPaths);
 
@@ -20,12 +20,8 @@ public class Main {
         createWriter(ioPaths.outputPath()),
         new LineParser(),
         new AssemblyTranslatorImpl());
-    translator.translate(createReader(Iterables.getOnlyElement(ioPaths.inputPaths())));
+    translator.translate(Iterables.getOnlyElement(ioPaths.inputFiles()));
     translator.done();
-  }
-
-  private static BufferedReader createReader(String filePath) throws FileNotFoundException {
-    return new BufferedReader(new FileReader(filePath));
   }
 
   private static BufferedWriter createWriter(String filePath) throws IOException {

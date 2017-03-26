@@ -12,17 +12,17 @@ import java.util.stream.Stream;
 @AutoValue
 abstract class IOPaths {
 
-  static IOPaths create(ImmutableList<String> inputPaths, String outputPath) {
-    return new AutoValue_IOPaths(inputPaths, outputPath);
+  static IOPaths create(ImmutableList<InputFile> inputFiles, String outputPath) {
+    return new AutoValue_IOPaths(inputFiles, outputPath);
   }
 
-  abstract ImmutableList<String> inputPaths();
+  abstract ImmutableList<InputFile> inputFiles();
 
   abstract String outputPath();
 
   public String toString() {
     return Streams.concat(
         Stream.of(outputPath()),
-        inputPaths().stream()).collect(Collectors.joining(", "));
+        inputFiles().stream().map(InputFile::toString)).collect(Collectors.joining(", "));
   }
 }

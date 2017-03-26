@@ -10,8 +10,8 @@ import com.google.common.base.Optional;
 abstract class ParsedLine {
 
   static ParsedLine create(String line, ParsedLine.LineType type,
-      Optional<ParsedLocation> location, int index) {
-    return new AutoValue_ParsedLine(line, type, location, index);
+      Optional<ParsedLocation> location, int index, String fileBaseName) {
+    return new AutoValue_ParsedLine(line, type, location, index, fileBaseName);
   }
 
   abstract String line();
@@ -22,8 +22,11 @@ abstract class ParsedLine {
 
   abstract int index();
 
+  public abstract String fileBaseName();
+
   public String toString() {
-    return String.format("%d) %s: { %s, %s}", index(), line(), type(), location());
+    return String
+        .format("%s:%d %s: { %s, %s}", fileBaseName(), index(), line(), type(), location());
   }
 
   enum LineType {

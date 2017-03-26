@@ -10,6 +10,59 @@ import java.util.stream.Stream;
 /**
  * Created by jpiyush on 3/23/17.
  */
+
+// pop contract: pop leaves popped value in D and address to push in A
+// default pop:
+//      (
+//        (
+//          (
+//            (save location to D)
+//            (save D to @13)
+//          )
+//          (execute pop to D)
+//          (restore A from @13)
+//        )
+//        (M=D)
+//      )
+//
+// pop to static
+//      (
+//        (
+//          ()
+//          (execute pop to D)
+//          (@Xxx.y)
+//        )
+//        (M=D)
+//      )
+//
+// pop to constant is an error
+
+// push contract: value to push is in D
+
+// default push
+//      (
+//        (
+//            (save location to A)
+//            D=M
+//        )
+//        (execute push of D)
+//      )
+// push from static
+//      (
+//        (
+//          @Xxx.y
+//          D=M
+//        )
+//        (execute push of D)
+//      )
+// push from constant
+//      (
+//        (
+//          @c
+//          D=A
+//        )
+//        (execute push of D)
+//      )
 public class SegmentLocationAssemblyTranslator implements AssemblyTranslator {
 
   private static final String POINTER_SEGMENT_BASE = "3";

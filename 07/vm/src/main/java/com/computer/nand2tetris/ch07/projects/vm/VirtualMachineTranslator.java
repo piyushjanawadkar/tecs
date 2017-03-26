@@ -3,6 +3,8 @@ package com.computer.nand2tetris.ch07.projects.vm;
 import com.google.common.collect.ImmutableList;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -21,12 +23,16 @@ class VirtualMachineTranslator {
     this.asmTranslator = asmTranslator;
   }
 
-  void translate(BufferedReader reader) {
-    reader.lines()
-        .map(lineParser::parse)
+  void translate(InputFile inputFile) throws FileNotFoundException {
+    createReader(inputFile).lines()
+        .map(l -> lineParser.parse(l, inputFile.baseName()))
         .map(asmTranslator::translate)
         .flatMap(ImmutableList::stream)
         .forEach(this::writeAndFlush);
+  }
+
+  private BufferedReader createReader(InputFile inputFile) throws FileNotFoundException {
+    return new BufferedReader(new FileReader(inputFile.path()));
   }
 
   private void writeAndFlush(String line) {

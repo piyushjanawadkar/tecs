@@ -6,6 +6,33 @@ import com.google.common.collect.Streams;
 /**
  * Created by jpiyush on 3/23/17.
  */
+
+// push contract: value to push is in D
+
+// default push
+//      (
+//        (
+//            (save location to A)
+//            D=M
+//        )
+//        (execute push of D)
+//      )
+// push from static
+//      (
+//        (
+//          @Xxx.y
+//          D=M
+//        )
+//        (execute push of D)
+//      )
+// push from constant
+//      (
+//        (
+//          @c
+//          D=A
+//        )
+//        (execute push of D)
+//      )
 public class PushAssemblyTranslator implements AssemblyTranslator {
 
 
@@ -20,15 +47,15 @@ public class PushAssemblyTranslator implements AssemblyTranslator {
       );
 
 
-  private final SegmentLocationAssemblyTranslator locationAsmGenerator;
+  private final SavePushValueToDTranslator savePushValueToDTranslator;
 
   public PushAssemblyTranslator(SegmentLocationAssemblyTranslator locationAsmGenerator) {
-    this.locationAsmGenerator = locationAsmGenerator;
+    this.savePushValueToDTranslator = new SavePushValueToDTranslator();
   }
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    return concat(locationAsmGenerator.translate(parsedLine), PUSH_ASM_SEQUENCE);
+    return concat(savePushValueToDTranslator.translate(parsedLine), PUSH_ASM_SEQUENCE);
   }
 
   private ImmutableList<String> concat(ImmutableList<String> first, ImmutableList<String> second) {
