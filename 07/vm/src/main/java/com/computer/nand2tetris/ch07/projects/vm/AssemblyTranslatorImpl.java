@@ -50,6 +50,8 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
 
   private static final ImmutableMap<ParsedLine.LineType, AssemblyTranslator> generatorsByType =
       ImmutableMap.<ParsedLine.LineType, AssemblyTranslator>builder()
+          .put(ParsedLine.LineType.BLANK_LINE, new EmitAssemblyTranslator(ImmutableList.of()))
+
           .put(ParsedLine.LineType.COMMAND_PUSH,
               new AssemblySequenceTranslator(new SavePushValueToDTranslator(),
                   new EmitAssemblyTranslator(PUSH_ASM_SEQUENCE)))
@@ -84,20 +86,25 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
 
   private static ImmutableList<String> format(ParsedLine parsedLine,
       ImmutableList<String> sequence) {
-    String comment = String.format("// %s", parsedLine.line());
-    return Streams.concat(
-        Stream.of(comment),
-        Streams.concat(
-            sequence.stream(), Stream.of(BLANK_ASM_LINE)))
-        .collect(ImmutableList.toImmutableList());
+    ImmutableList.Builder<String> builder = ImmutableList.builder();
+
+    if (!parsedLine.line().isEmpty()) {
+      builder.add(String.format("// %s", parsedLine.line()));
+    }
+    builder.addAll(sequence);
+
+    ImmutableList<String> commentQualifiedSequence = builder.build();
+
+    if (commentQualifiedSequence.isEmpty()) {
+      return commentQualifiedSequence;
+    }
+
+    builder.add(BLANK_ASM_LINE);
+    return builder.build();
   }
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    if (parsedLine.type().equals(ParsedLine.LineType.BLANK_LINE)) {
-      return ImmutableList.of();
-    }
-
     AssemblyTranslator generator = generatorsByType.get(parsedLine.type());
     Preconditions.checkNotNull(generator, "No generator found for %s", parsedLine.type());
     return format(parsedLine, generator.translate(parsedLine));
