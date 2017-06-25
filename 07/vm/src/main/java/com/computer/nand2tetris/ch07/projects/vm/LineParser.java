@@ -25,6 +25,8 @@ class LineParser {
           .put("lt", ParsedLine.LineType.COMMAND_LT)
           .put("eq", ParsedLine.LineType.COMMAND_EQ)
           .put("gt", ParsedLine.LineType.COMMAND_GT)
+          .put("function", ParsedLine.LineType.FUNCTION_DEFINITION)
+          .put("return", ParsedLine.LineType.FUNCTION_RETURN)
           .build();
 
   private static final ImmutableMap<String, ParsedLocation.SegmentType> segmentTypeByTerm =

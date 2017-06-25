@@ -1,10 +1,9 @@
 package com.computer.nand2tetris.ch07.projects.vm;
 
+import com.computer.nand2tetris.ch07.projects.vm.ParsedLine.LineType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Streams;
-import java.util.stream.Stream;
 
 /**
  * Created by jpiyush on 3/23/17.
@@ -82,6 +81,9 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
           .put(ParsedLine.LineType.COMMAND_GT,
               new RelationalOpAssemblyTranslator("JGT", RELATIONAL_OP_VALUE_TRUE,
                   RELATIONAL_OP_VALUE_FALSE))
+
+          .put(ParsedLine.LineType.FUNCTION_DEFINITION, new CommentedVmLineEmitter())
+          .put(LineType.FUNCTION_RETURN, new CommentedVmLineEmitter())
           .build();
 
   private static ImmutableList<String> format(ParsedLine parsedLine,
