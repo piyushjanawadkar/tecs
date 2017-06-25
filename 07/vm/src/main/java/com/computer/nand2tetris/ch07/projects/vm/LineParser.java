@@ -11,6 +11,8 @@ class LineParser {
 
   private static final String TERM_PUSH = "push";
   private static final String TERM_POP = "pop";
+  private static final String TERM_FUNCTION = "function";
+
 
   private static final ImmutableMap<String, ParsedLine.LineType> lineTypeByTerm =
       ImmutableMap.<String, ParsedLine.LineType>builder()
@@ -25,7 +27,7 @@ class LineParser {
           .put("lt", ParsedLine.LineType.COMMAND_LT)
           .put("eq", ParsedLine.LineType.COMMAND_EQ)
           .put("gt", ParsedLine.LineType.COMMAND_GT)
-          .put("function", ParsedLine.LineType.FUNCTION_DEFINITION)
+          .put(TERM_FUNCTION, ParsedLine.LineType.FUNCTION_DEFINITION)
           .put("return", ParsedLine.LineType.FUNCTION_RETURN)
           .build();
 
@@ -79,7 +81,19 @@ class LineParser {
       parsedLocation = Optional.of(createParsedLocation(terms));
     }
 
-    return ParsedLine.create(line, command, parsedLocation, nextIndex++, fileBaseName);
+    Optional<ParsedFunctionParams> parsedFunctionParams = Optional.absent();
+    if (firstTerm.equals(TERM_FUNCTION)) {
+      parsedFunctionParams = Optional.of(createParsedFunctionParams(terms));
+    }
+
+    return ParsedLine
+        .create(line, command, parsedLocation, nextIndex++, fileBaseName, parsedFunctionParams);
+  }
+
+  private ParsedFunctionParams createParsedFunctionParams(String[] terms) {
+    Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
+    int numLocalArgs = Integer.parseInt(terms[2]);
+    return ParsedFunctionParams.create(terms[1], numLocalArgs);
   }
 
   ParsedLine parse(String line, String fileBaseName) {
@@ -88,7 +102,7 @@ class LineParser {
     if (line.isEmpty()) {
       return ParsedLine
           .create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent(), nextIndex++,
-              fileBaseName);
+              fileBaseName, Optional.absent());
     }
 
     return parseStatement(line, fileBaseName);

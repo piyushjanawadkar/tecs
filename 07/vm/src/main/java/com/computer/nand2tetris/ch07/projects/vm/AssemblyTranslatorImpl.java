@@ -82,7 +82,7 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
               new RelationalOpAssemblyTranslator("JGT", RELATIONAL_OP_VALUE_TRUE,
                   RELATIONAL_OP_VALUE_FALSE))
 
-          .put(ParsedLine.LineType.FUNCTION_DEFINITION, new CommentedVmLineEmitter())
+          .put(ParsedLine.LineType.FUNCTION_DEFINITION, new FunctionDefinitionTranslator())
           .put(LineType.FUNCTION_RETURN, new CommentedVmLineEmitter())
           .build();
 
