@@ -8,22 +8,56 @@ import com.google.common.collect.ImmutableList.Builder;
  */
 public class FunctionDefinitionTranslator implements AssemblyTranslator {
 
+  private static final ImmutableList<String> LOCAL_VARIABLE_PUSH_BEGIN_SEQUENCE = ImmutableList.of(
+      "// copy initial value to D",
+      "@0",
+      "D=A",
+      "// point A to stack top",
+      "@SP",
+      "A=M"
+  );
+
+  private static final ImmutableList<String> LOCAL_VARIABLE_PUSH_SEQUENCE = ImmutableList.of(
+      "M=D",
+      "%s=A+1"
+  );
+
+  private static final ImmutableList<String> LOCAL_VARIABLE_PUSH_END_SEQUENCE = ImmutableList.of(
+      "//save new stack top",
+      "@SP",
+      "M=D"
+  );
+
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
     ImmutableList.Builder<String> builder = ImmutableList.builder();
 
-    addFunctionName(parsedLine, builder);
-    addLocalVariables(parsedLine, builder);
+    ParsedFunctionParams parsedFunctionParams = parsedLine.function().get();
+    translateFunctionName(parsedFunctionParams.name(), builder);
+    translateLocalVariables(parsedFunctionParams.numLocalArgs(), builder);
 
     return builder.build();
   }
 
-  private void addFunctionName(ParsedLine parsedLine, Builder<String> builder) {
-    System.err.println(parsedLine);
-    builder.add(String.format("(%s)", parsedLine.function().get().name()));
+  private void translateFunctionName(String functionName, Builder<String> builder) {
+    builder.add(String.format("(%s)", functionName));
   }
 
-  private void addLocalVariables(ParsedLine parsedLine, Builder<String> builder) {
-    // TODO(jpiyush): implement
+  private void translateLocalVariables(int numLocalVars, Builder<String> builder) {
+    builder.addAll(LOCAL_VARIABLE_PUSH_BEGIN_SEQUENCE);
+    builder.add("// push initialized local variables");
+    for (int i = 0; i < numLocalVars - 1; i++) {
+      pushLocalVariable(builder);
+    }
+    pushLastLocalVariable(builder);
+    builder.addAll(LOCAL_VARIABLE_PUSH_END_SEQUENCE);
+  }
+
+  private void pushLocalVariable(Builder<String> builder) {
+    builder.addAll(AssemblySequenceFormatter.format(LOCAL_VARIABLE_PUSH_SEQUENCE, "A"));
+  }
+
+  private void pushLastLocalVariable(Builder<String> builder) {
+    builder.addAll(AssemblySequenceFormatter.format(LOCAL_VARIABLE_PUSH_SEQUENCE, "D"));
   }
 }
