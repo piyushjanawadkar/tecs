@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList.Builder;
 /**
  * Created by jpiyush on 6/25/17.
  */
-public class FunctionDefinitionTranslator implements AssemblyTranslator {
+public class FunctionDeclarationTranslator implements AssemblyTranslator {
 
   private static final ImmutableList<String> LOCAL_VARIABLE_PUSH_BEGIN_SEQUENCE = ImmutableList.of(
       "// copy initial value to D",
