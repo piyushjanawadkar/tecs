@@ -83,7 +83,7 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
                   RELATIONAL_OP_VALUE_FALSE))
 
           .put(ParsedLine.LineType.FUNCTION_DEFINITION, new FunctionDeclarationTranslator())
-          .put(LineType.FUNCTION_RETURN, new CommentedVmLineEmitter())
+          .put(LineType.FUNCTION_RETURN, new FunctionReturnTranslator())
           .build();
 
   private static ImmutableList<String> format(ParsedLine parsedLine,
