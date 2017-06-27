@@ -1,6 +1,5 @@
 package com.computer.nand2tetris.ch07.projects.vm;
 
-import com.computer.nand2tetris.ch07.projects.vm.ParsedLine.LineType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -83,7 +82,12 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
                   RELATIONAL_OP_VALUE_FALSE))
 
           .put(ParsedLine.LineType.FUNCTION_DEFINITION, new FunctionDeclarationTranslator())
-          .put(LineType.FUNCTION_RETURN, new FunctionReturnTranslator())
+          .put(ParsedLine.LineType.FUNCTION_RETURN, new FunctionReturnTranslator())
+          .put(ParsedLine.LineType.FUNCTION_CALL, new CommentedVmLineEmitter())
+
+          .put(ParsedLine.LineType.LABEL, new CommentedVmLineEmitter())
+          .put(ParsedLine.LineType.GOTO, new CommentedVmLineEmitter())
+
           .build();
 
   private static ImmutableList<String> format(ParsedLine parsedLine,

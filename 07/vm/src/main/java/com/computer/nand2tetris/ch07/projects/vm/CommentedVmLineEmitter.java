@@ -6,6 +6,6 @@ public class CommentedVmLineEmitter implements AssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    return ImmutableList.of("// " + parsedLine.toString());
+    return ImmutableList.of("// TODO: implement", "// " + parsedLine.toString());
   }
 }

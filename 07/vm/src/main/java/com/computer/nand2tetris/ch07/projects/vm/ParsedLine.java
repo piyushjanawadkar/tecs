@@ -47,6 +47,6 @@ abstract class ParsedLine {
     COMMAND_EQ,
     COMMAND_GT,
     FUNCTION_DEFINITION,
-    FUNCTION_RETURN,
+    FUNCTION_RETURN, FUNCTION_CALL, LABEL, GOTO,
   }
 }
