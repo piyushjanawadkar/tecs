@@ -33,14 +33,15 @@ public class FunctionDeclarationTranslator implements AssemblyTranslator {
     ImmutableList.Builder<String> builder = ImmutableList.builder();
 
     ParsedFunctionParams parsedFunctionParams = parsedLine.function().get();
-    translateFunctionName(parsedFunctionParams.name(), builder);
+    translateFunctionName(parsedLine.fileBaseName(), parsedFunctionParams.name(), builder);
     translateLocalVariables(parsedFunctionParams.numLocalArgs(), builder);
 
     return builder.build();
   }
 
-  private void translateFunctionName(String functionName, Builder<String> builder) {
-    builder.add(String.format("(%s)", functionName));
+  private void translateFunctionName(String fileBaseName, String functionName,
+      Builder<String> builder) {
+    builder.add(String.format("(%s.%s)", fileBaseName, functionName));
   }
 
   private void translateLocalVariables(int numLocalVars, Builder<String> builder) {
