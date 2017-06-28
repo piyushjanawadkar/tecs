@@ -12,6 +12,22 @@ public class FunctionCallTranslator implements AssemblyTranslator {
       "@%s",
       "D=A"
   );
+
+  private static final ImmutableList<String> COPY_D_TO_LOCAL_SEQUENCE = ImmutableList.of(
+      "// update LCL (current stack top is in D)",
+      "@LCL",
+      "M=D"
+  );
+
+  private static final ImmutableList<String> UPDATE_ARG_FORMAT = ImmutableList.of(
+      "// update ARG (current stack top is in D)",
+      "@%d",
+      "D=D-A",
+      "@ARG",
+      "M=D"
+  );
+  private static final int SAVED_FRAME_SIZE = 5;  // return address, LCL, ARG, THIS, THAT
+
   private LabelGenerator labelGenerator;
   private AssemblyTranslator pushSequenceTranslator;
 
@@ -27,7 +43,7 @@ public class FunctionCallTranslator implements AssemblyTranslator {
     Label returnAddressLabel = createReturnAddressLabel(parsedLine);
     pushReturnAddress(returnAddressLabel, builder);
     pushFrame(builder);
-    updateState(builder);
+    updateState(parsedLine, builder);
     jumpToFunction(builder);
     writeLabel(builder);
     return builder.build();
@@ -37,21 +53,22 @@ public class FunctionCallTranslator implements AssemblyTranslator {
     return labelGenerator.generate(parsedLine);
   }
 
-  private void pushReturnAddress(Label returnAddressLabel, Builder<String> builder) {
+  private void pushReturnAddress(Label returnAddressLabel, ImmutableList.Builder<String> builder) {
     pushAddressLabelText(returnAddressLabel.text(), builder);
   }
 
-  private void pushAddressLabelText(String addressLabelText, Builder<String> builder) {
+  private void pushAddressLabelText(String addressLabelText,
+      ImmutableList.Builder<String> builder) {
     builder.add("// push " + addressLabelText);
     saveAddressToD(addressLabelText, builder);
     builder.addAll(pushSequenceTranslator.translate(null));
   }
 
-  private void saveAddressToD(String text, Builder<String> builder) {
+  private void saveAddressToD(String text, ImmutableList.Builder<String> builder) {
     builder.addAll(AssemblySequenceFormatter.format(SAVE_ADDRESS_TO_D_FORMAT, text));
   }
 
-  private void pushFrame(Builder<String> builder) {
+  private void pushFrame(ImmutableList.Builder<String> builder) {
     builder.add("// push frame");
     pushAddressLabelText(ADDRESS_IDENTIFIER_LOCAL, builder);
     pushAddressLabelText(ADDRESS_IDENTIFIER_ARG, builder);
@@ -59,14 +76,26 @@ public class FunctionCallTranslator implements AssemblyTranslator {
     pushAddressLabelText(ADDRESS_IDENTIFIER_THAT, builder);
   }
 
-  private void updateState(Builder<String> builder) {
+  private void updateState(ParsedLine parsedLine, Builder<String> builder) {
+    builder.add("// update state");
+    updateLocal(builder);
+    updateArg(parsedLine, builder);
+  }
+
+  private void updateArg(ParsedLine parsedLine, Builder<String> builder) {
+    int argOffset = parsedLine.function().get().numArgs().get();
+    builder
+        .addAll(AssemblySequenceFormatter.format(UPDATE_ARG_FORMAT, argOffset + SAVED_FRAME_SIZE));
+  }
+
+  private void updateLocal(ImmutableList.Builder<String> builder) {
+    builder.addAll(COPY_D_TO_LOCAL_SEQUENCE);
+  }
+
+  private void jumpToFunction(ImmutableList.Builder<String> builder) {
 
   }
 
-  private void jumpToFunction(Builder<String> builder) {
-
-  }
-
-  private void writeLabel(Builder<String> builder) {
+  private void writeLabel(ImmutableList.Builder<String> builder) {
   }
 }
