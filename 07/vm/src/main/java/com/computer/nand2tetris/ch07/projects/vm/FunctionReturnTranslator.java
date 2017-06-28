@@ -9,10 +9,6 @@ import com.google.common.collect.ImmutableMap;
 public class FunctionReturnTranslator implements AssemblyTranslator {
 
   private static final String RETURN_ADDRESS_TEMP_LOCATION = "R13";
-  private static final String LOCATION_IDENTIFIER_LOCAL = "LCL";
-  private static final String LOCATION_IDENTIFIER_ARG = "ARG";
-  private static final String LOCATION_IDENTIFIER_THIS = "THIS";
-  private static final String LOCATION_IDENTIFIER_THAT = "THAT";
 
   private static final ImmutableList<String> RETURN_ADDRESS_SAVE_TEMP_SEQUENCE_FORMAT =
       ImmutableList.of(
@@ -72,10 +68,10 @@ public class FunctionReturnTranslator implements AssemblyTranslator {
 
   private static final ImmutableMap<String, Integer> OFFSETS_RELATIVE_TO_LOCAL_BY_OUTPUT_LOCATION =
       ImmutableMap.of(
-          LOCATION_IDENTIFIER_LOCAL, 4,
-          LOCATION_IDENTIFIER_ARG, 3,
-          LOCATION_IDENTIFIER_THIS, 2,
-          LOCATION_IDENTIFIER_THAT, 1
+          ADDRESS_IDENTIFIER_LOCAL, 4,
+          ADDRESS_IDENTIFIER_ARG, 3,
+          ADDRESS_IDENTIFIER_THIS, 2,
+          ADDRESS_IDENTIFIER_THAT, 1
       );
 
   private static void saveReturnAddressInTempSegment(String tempLocation,
@@ -100,10 +96,10 @@ public class FunctionReturnTranslator implements AssemblyTranslator {
   }
 
   private void restoreState(ImmutableList.Builder<String> builder) {
-    restoreCell(LOCATION_IDENTIFIER_THAT, builder);
-    restoreCell(LOCATION_IDENTIFIER_THIS, builder);
-    restoreCell(LOCATION_IDENTIFIER_ARG, builder);
-    restoreCell(LOCATION_IDENTIFIER_LOCAL, builder);
+    restoreCell(ADDRESS_IDENTIFIER_THAT, builder);
+    restoreCell(ADDRESS_IDENTIFIER_THIS, builder);
+    restoreCell(ADDRESS_IDENTIFIER_ARG, builder);
+    restoreCell(ADDRESS_IDENTIFIER_LOCAL, builder);
   }
 
   private void jumpToReturnAddress(String outputLocation, ImmutableList.Builder<String> builder) {

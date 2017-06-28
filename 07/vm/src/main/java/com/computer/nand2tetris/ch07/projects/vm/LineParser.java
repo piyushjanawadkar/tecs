@@ -12,7 +12,7 @@ class LineParser {
   private static final String TERM_PUSH = "push";
   private static final String TERM_POP = "pop";
   private static final String TERM_FUNCTION = "function";
-
+  private static final String TERM_FUNCTION_CALL = "call";
 
   private static final ImmutableMap<String, ParsedLine.LineType> lineTypeByTerm =
       ImmutableMap.<String, ParsedLine.LineType>builder()
@@ -87,16 +87,24 @@ class LineParser {
     Optional<ParsedFunctionParams> parsedFunctionParams = Optional.absent();
     if (firstTerm.equals(TERM_FUNCTION)) {
       parsedFunctionParams = Optional.of(createParsedFunctionParams(terms));
+    } else if (firstTerm.equals(TERM_FUNCTION_CALL)) {
+      parsedFunctionParams = Optional.of(createParsedFunctionCallParams(terms));
     }
 
     return ParsedLine
         .create(line, command, parsedLocation, nextIndex++, fileBaseName, parsedFunctionParams);
   }
 
+  private ParsedFunctionParams createParsedFunctionCallParams(String[] terms) {
+    Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
+    Integer numArgs = Integer.valueOf(terms[2]);
+    return ParsedFunctionParams.create(terms[1], Optional.of(numArgs), Optional.absent());
+  }
+
   private ParsedFunctionParams createParsedFunctionParams(String[] terms) {
     Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
-    int numLocalArgs = Integer.parseInt(terms[2]);
-    return ParsedFunctionParams.create(terms[1], numLocalArgs);
+    Integer numLocalArgs = Integer.valueOf(terms[2]);
+    return ParsedFunctionParams.create(terms[1], Optional.absent(), Optional.of(numLocalArgs));
   }
 
   ParsedLine parse(String line, String fileBaseName) {

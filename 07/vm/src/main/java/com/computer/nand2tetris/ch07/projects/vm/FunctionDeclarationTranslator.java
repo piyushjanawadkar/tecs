@@ -34,7 +34,7 @@ public class FunctionDeclarationTranslator implements AssemblyTranslator {
 
     ParsedFunctionParams parsedFunctionParams = parsedLine.function().get();
     translateFunctionName(parsedLine.fileBaseName(), parsedFunctionParams.name(), builder);
-    translateLocalVariables(parsedFunctionParams.numLocalArgs(), builder);
+    translateLocalVariables(parsedFunctionParams.numLocalArgs().get(), builder);
 
     return builder.build();
   }
@@ -45,6 +45,10 @@ public class FunctionDeclarationTranslator implements AssemblyTranslator {
   }
 
   private void translateLocalVariables(int numLocalVars, Builder<String> builder) {
+    if (numLocalVars == 0) {
+      return;
+    }
+
     builder.addAll(LOCAL_VARIABLE_PUSH_BEGIN_SEQUENCE);
     builder.add("// push initialized local variables");
     for (int i = 0; i < numLocalVars - 1; i++) {

@@ -33,7 +33,7 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
           "M=%sM"
       );
 
-  private static final ImmutableList<String> PUSH_ASM_SEQUENCE =
+  private static final AssemblyTranslator pushSequenceTranslator = new EmitAssemblyTranslator(
       ImmutableList.of(
           "// push contents of D",
           "@SP",
@@ -41,7 +41,7 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
           "M=D",
           "@SP",
           "M=M+1"
-      );
+      ));
 
   private static final int RELATIONAL_OP_VALUE_TRUE = -1;
   private static final int RELATIONAL_OP_VALUE_FALSE = 0;
@@ -52,7 +52,7 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
 
           .put(ParsedLine.LineType.COMMAND_PUSH,
               new AssemblySequenceTranslator(new SavePushValueToDTranslator(),
-                  new EmitAssemblyTranslator(PUSH_ASM_SEQUENCE)))
+                  pushSequenceTranslator))
           .put(ParsedLine.LineType.COMMAND_POP,
               new AssemblySequenceTranslator(new SavePopValueToDAndAddressToATranslator(),
                   new EmitAssemblyTranslator(ImmutableList.of("M=D"))))
@@ -83,7 +83,8 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
 
           .put(ParsedLine.LineType.FUNCTION_DEFINITION, new FunctionDeclarationTranslator())
           .put(ParsedLine.LineType.FUNCTION_RETURN, new FunctionReturnTranslator())
-          .put(ParsedLine.LineType.FUNCTION_CALL, new CommentedVmLineEmitter())
+          .put(ParsedLine.LineType.FUNCTION_CALL,
+              new FunctionCallTranslator(new LabelGeneratorImpl(), pushSequenceTranslator))
 
           .put(ParsedLine.LineType.LABEL, new CommentedVmLineEmitter())
           .put(ParsedLine.LineType.GOTO, new CommentedVmLineEmitter())
