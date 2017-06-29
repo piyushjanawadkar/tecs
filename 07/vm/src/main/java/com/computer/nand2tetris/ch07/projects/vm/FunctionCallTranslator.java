@@ -26,31 +26,32 @@ public class FunctionCallTranslator implements AssemblyTranslator {
       "@ARG",
       "M=D"
   );
-  private static final int SAVED_FRAME_SIZE = 5;  // return address, LCL, ARG, THIS, THAT
+  private static final int SAVED_FRAME_SIZE = 5;  // return_address, LCL, ARG, THIS, THAT
 
-  private LabelGenerator labelGenerator;
+  private static final ImmutableList<String> JUMP_TO_FUNCTION_FORMAT = ImmutableList.of(
+      "@%s",
+      "0;JMP"
+  );
+
   private AssemblyTranslator pushSequenceTranslator;
 
-  public FunctionCallTranslator(
-      LabelGenerator labelGenerator, AssemblyTranslator pushSequenceTranslator) {
-    this.labelGenerator = labelGenerator;
+  public FunctionCallTranslator(AssemblyTranslator pushSequenceTranslator) {
     this.pushSequenceTranslator = pushSequenceTranslator;
   }
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
     ImmutableList.Builder<String> builder = ImmutableList.builder();
-    Label returnAddressLabel = createReturnAddressLabel(parsedLine);
+
+    Label returnAddressLabel = Labels.postFunctionCallLabelOf(parsedLine);
     pushReturnAddress(returnAddressLabel, builder);
     pushFrame(builder);
-    updateState(parsedLine, builder);
-    jumpToFunction(builder);
-    writeLabel(builder);
-    return builder.build();
-  }
 
-  private Label createReturnAddressLabel(ParsedLine parsedLine) {
-    return labelGenerator.generate(parsedLine);
+    ParsedFunctionParams parsedFunction = parsedLine.function().get();
+    updateState(parsedFunction, builder);
+    jumpToFunction(parsedLine, builder);
+    writeLabel(returnAddressLabel, builder);
+    return builder.build();
   }
 
   private void pushReturnAddress(Label returnAddressLabel, ImmutableList.Builder<String> builder) {
@@ -76,26 +77,28 @@ public class FunctionCallTranslator implements AssemblyTranslator {
     pushAddressLabelText(ADDRESS_IDENTIFIER_THAT, builder);
   }
 
-  private void updateState(ParsedLine parsedLine, Builder<String> builder) {
+  private void updateState(ParsedFunctionParams parsedFunction, Builder<String> builder) {
     builder.add("// update state");
     updateLocal(builder);
-    updateArg(parsedLine, builder);
+    updateArg(parsedFunction, builder);
   }
 
-  private void updateArg(ParsedLine parsedLine, Builder<String> builder) {
-    int argOffset = parsedLine.function().get().numArgs().get();
+  private void updateArg(ParsedFunctionParams parsedFunction, Builder<String> builder) {
+    int argOffset = parsedFunction.numArgs().get() + SAVED_FRAME_SIZE;
     builder
-        .addAll(AssemblySequenceFormatter.format(UPDATE_ARG_FORMAT, argOffset + SAVED_FRAME_SIZE));
+        .addAll(AssemblySequenceFormatter.format(UPDATE_ARG_FORMAT, argOffset));
   }
 
   private void updateLocal(ImmutableList.Builder<String> builder) {
     builder.addAll(COPY_D_TO_LOCAL_SEQUENCE);
   }
 
-  private void jumpToFunction(ImmutableList.Builder<String> builder) {
-
+  private void jumpToFunction(ParsedLine parsedLine, ImmutableList.Builder<String> builder) {
+    builder.addAll(AssemblySequenceFormatter
+        .format(JUMP_TO_FUNCTION_FORMAT, Labels.functionNameLabelOf(parsedLine).text()));
   }
 
-  private void writeLabel(ImmutableList.Builder<String> builder) {
+  private void writeLabel(Label returnAddressLabel, Builder<String> builder) {
+    builder.add(returnAddressLabel.generateDefinitionText());
   }
 }

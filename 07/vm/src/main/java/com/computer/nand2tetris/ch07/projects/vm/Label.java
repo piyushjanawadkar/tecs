@@ -12,4 +12,8 @@ abstract class Label {
   }
 
   abstract String text();
+
+  public String generateDefinitionText() {
+    return String.format("(%s)", text());
+  }
 }
