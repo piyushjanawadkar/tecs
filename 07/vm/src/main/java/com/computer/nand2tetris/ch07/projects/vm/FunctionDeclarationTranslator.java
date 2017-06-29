@@ -1,7 +1,6 @@
 package com.computer.nand2tetris.ch07.projects.vm;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 
 /**
  * Created by jpiyush on 6/25/17.
@@ -33,18 +32,18 @@ public class FunctionDeclarationTranslator implements AssemblyTranslator {
     ImmutableList.Builder<String> builder = ImmutableList.builder();
 
     ParsedFunctionParams parsedFunctionParams = parsedLine.function().get();
-    translateFunctionName(parsedLine.fileBaseName(), parsedFunctionParams.name(), builder);
+    translateFunctionName(parsedLine, builder);
     translateLocalVariables(parsedFunctionParams.numLocalArgs().get(), builder);
 
     return builder.build();
   }
 
-  private void translateFunctionName(String fileBaseName, String functionName,
-      Builder<String> builder) {
-    builder.add(String.format("(%s.%s)", fileBaseName, functionName));
+  private void translateFunctionName(ParsedLine parsedLine, ImmutableList.Builder<String> builder) {
+    Label label = Labels.functionNameLabelOf(parsedLine);
+    builder.add(label.generateDefinitionText());
   }
 
-  private void translateLocalVariables(int numLocalVars, Builder<String> builder) {
+  private void translateLocalVariables(int numLocalVars, ImmutableList.Builder<String> builder) {
     if (numLocalVars == 0) {
       return;
     }
@@ -58,11 +57,11 @@ public class FunctionDeclarationTranslator implements AssemblyTranslator {
     builder.addAll(LOCAL_VARIABLE_PUSH_END_SEQUENCE);
   }
 
-  private void pushLocalVariable(Builder<String> builder) {
+  private void pushLocalVariable(ImmutableList.Builder<String> builder) {
     builder.addAll(AssemblySequenceFormatter.format(LOCAL_VARIABLE_PUSH_SEQUENCE, "A"));
   }
 
-  private void pushLastLocalVariable(Builder<String> builder) {
+  private void pushLastLocalVariable(ImmutableList.Builder<String> builder) {
     builder.addAll(AssemblySequenceFormatter.format(LOCAL_VARIABLE_PUSH_SEQUENCE, "D"));
   }
 }
