@@ -8,19 +8,16 @@ final class Labels {
   private Labels() {
   }
 
-  static Label labelOf(String text) {
-    return Label.create(text);
+  static Label labelOf(String fileBaseName, String text) {
+    return Label.create(String.format("%s.%s", fileBaseName, text));
   }
 
   static Label functionNameLabelOf(ParsedLine parsedLine) {
-    String text = String
-        .format("%s.%s", parsedLine.fileBaseName(), parsedLine.function().get().name());
-    return labelOf(text);
+    return labelOf(parsedLine.fileBaseName(), parsedLine.function().get().name());
   }
 
   static Label postFunctionCallLabelOf(ParsedLine parsedLine) {
-    String text = String
-        .format("%s.Aft.%s", parsedLine.fileBaseName(), parsedLine.function().get().name());
-    return labelOf(text);
+    return labelOf(parsedLine.fileBaseName(),
+        String.format("Aft.%s", parsedLine.function().get().name()));
   }
 }

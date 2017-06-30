@@ -13,6 +13,8 @@ class LineParser {
   private static final String TERM_POP = "pop";
   private static final String TERM_FUNCTION = "function";
   private static final String TERM_FUNCTION_CALL = "call";
+  private static final String TERM_LABEL = "label";
+  private static final String TERM_GOTO = "goto";
 
   private static final ImmutableMap<String, ParsedLine.LineType> lineTypeByTerm =
       ImmutableMap.<String, ParsedLine.LineType>builder()
@@ -91,8 +93,14 @@ class LineParser {
       parsedFunctionParams = Optional.of(createParsedFunctionCallParams(terms));
     }
 
+    Optional<Label> label = Optional.absent();
+    if (firstTerm.equals(TERM_LABEL) || firstTerm.equals(TERM_GOTO)) {
+      label = Optional.of(Labels.labelOf(fileBaseName, terms[1]));
+    }
+
     return ParsedLine
-        .create(line, command, parsedLocation, nextIndex++, fileBaseName, parsedFunctionParams);
+        .create(line, command, parsedLocation, nextIndex++, fileBaseName, parsedFunctionParams,
+            label);
   }
 
   private ParsedFunctionParams createParsedFunctionCallParams(String[] terms) {
@@ -113,7 +121,7 @@ class LineParser {
     if (line.isEmpty()) {
       return ParsedLine
           .create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent(), nextIndex++,
-              fileBaseName, Optional.absent());
+              fileBaseName, Optional.absent(), Optional.absent());
     }
 
     return parseStatement(line, fileBaseName);

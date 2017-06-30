@@ -76,8 +76,8 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
           .put(ParsedLine.LineType.FUNCTION_CALL,
               new FunctionCallTranslator(new PushValueInDTranslator(true)))
 
-          .put(ParsedLine.LineType.LABEL, new CommentedVmLineEmitter())
-          .put(ParsedLine.LineType.GOTO, new CommentedVmLineEmitter())
+          .put(ParsedLine.LineType.LABEL, new LabelTranslator())
+          .put(ParsedLine.LineType.GOTO, new GotoTranslator())
 
           .build();
 

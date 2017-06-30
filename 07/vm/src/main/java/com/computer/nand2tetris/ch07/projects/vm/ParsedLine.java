@@ -11,8 +11,8 @@ abstract class ParsedLine {
 
   static ParsedLine create(String line, ParsedLine.LineType type,
       Optional<ParsedLocation> location, int index, String fileBaseName,
-      Optional<ParsedFunctionParams> function) {
-    return new AutoValue_ParsedLine(line, type, location, index, fileBaseName, function);
+      Optional<ParsedFunctionParams> function, Optional<Label> label) {
+    return new AutoValue_ParsedLine(line, type, location, index, fileBaseName, function, label);
   }
 
   abstract String line();
@@ -26,6 +26,8 @@ abstract class ParsedLine {
   public abstract String fileBaseName();
 
   abstract Optional<ParsedFunctionParams> function();
+
+  abstract Optional<Label> label();
 
   public String toString() {
     return String
