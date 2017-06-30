@@ -126,4 +126,8 @@ class LineParser {
 
     return parseStatement(line, fileBaseName);
   }
+
+  void resetIndex() {
+    nextIndex = 0;
+  }
 }

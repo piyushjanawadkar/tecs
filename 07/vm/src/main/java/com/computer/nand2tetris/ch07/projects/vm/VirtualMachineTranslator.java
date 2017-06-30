@@ -31,7 +31,10 @@ class VirtualMachineTranslator {
   }
 
   public void translate(ImmutableList<InputFile> inputFiles) {
-    inputFiles.stream().forEachOrdered(f -> translateFile(f));
+    inputFiles.stream().forEachOrdered(f -> {
+      lineParser.resetIndex();
+      translateFile(f);
+    });
   }
 
   private void translateFile(InputFile inputFile) {
