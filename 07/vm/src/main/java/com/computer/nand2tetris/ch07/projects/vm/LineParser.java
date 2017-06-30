@@ -32,8 +32,8 @@ class LineParser {
           .put(TERM_FUNCTION, ParsedLine.LineType.FUNCTION_DEFINITION)
           .put("return", ParsedLine.LineType.FUNCTION_RETURN)
           .put("call", ParsedLine.LineType.FUNCTION_CALL)
-          .put("label", ParsedLine.LineType.LABEL)
-          .put("goto", ParsedLine.LineType.GOTO)
+          .put(TERM_LABEL, ParsedLine.LineType.LABEL)
+          .put(TERM_GOTO, ParsedLine.LineType.GOTO)
           .build();
 
   private static final ImmutableMap<String, ParsedLocation.SegmentType> segmentTypeByTerm =
