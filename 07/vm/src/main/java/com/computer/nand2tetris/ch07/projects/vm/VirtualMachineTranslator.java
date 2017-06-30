@@ -30,12 +30,20 @@ class VirtualMachineTranslator {
     this.asmTranslator = asmTranslator;
   }
 
-  void translate(InputFile inputFile) throws FileNotFoundException {
-    createReader(inputFile).lines()
-        .map(l -> lineParser.parse(l, inputFile.baseName()))
-        .map(asmTranslator::translate)
-        .flatMap(ImmutableList::stream)
-        .forEach(this::writeAndFlush);
+  public void translate(ImmutableList<InputFile> inputFiles) {
+    inputFiles.stream().forEachOrdered(f -> translateFile(f));
+  }
+
+  private void translateFile(InputFile inputFile) {
+    try {
+      createReader(inputFile).lines()
+          .map(l -> lineParser.parse(l, inputFile.baseName()))
+          .map(asmTranslator::translate)
+          .flatMap(ImmutableList::stream)
+          .forEach(this::writeAndFlush);
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private BufferedReader createReader(InputFile inputFile) throws FileNotFoundException {
