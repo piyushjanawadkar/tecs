@@ -10,7 +10,7 @@ public class FunctionCallTranslator implements AssemblyTranslator {
 
   private static final ImmutableList<String> SAVE_ADDRESS_TO_D_FORMAT = ImmutableList.of(
       "@%s",
-      "D=A"
+      "D=%s"
   );
 
   private static final ImmutableList<String> COPY_D_TO_LOCAL_SEQUENCE = ImmutableList.of(
@@ -33,6 +33,7 @@ public class FunctionCallTranslator implements AssemblyTranslator {
       "@%s",
       "0;JMP"
   );
+  private static final boolean SHOULD_DEREFERENCE = true;
 
   private AssemblyTranslator pushSequenceTranslator;
 
@@ -56,26 +57,28 @@ public class FunctionCallTranslator implements AssemblyTranslator {
   }
 
   private void pushReturnAddress(Label returnAddressLabel, ImmutableList.Builder<String> builder) {
-    pushAddressLabelText(returnAddressLabel.text(), builder);
+    pushAddressLabelText(returnAddressLabel.text(), !SHOULD_DEREFERENCE, builder);
   }
 
   private void pushAddressLabelText(String addressLabelText,
-      ImmutableList.Builder<String> builder) {
+      boolean shouldDereference, Builder<String> builder) {
     builder.add("// push " + addressLabelText);
-    saveAddressToD(addressLabelText, builder);
+    saveAddressToD(addressLabelText, shouldDereference, builder);
     builder.addAll(pushSequenceTranslator.translate(null));
   }
 
-  private void saveAddressToD(String text, ImmutableList.Builder<String> builder) {
-    builder.addAll(AssemblySequenceFormatter.format(SAVE_ADDRESS_TO_D_FORMAT, text));
+  private void saveAddressToD(String text, boolean shouldDerefernce,
+      ImmutableList.Builder<String> builder) {
+    String value = shouldDerefernce ? "M" : "A";
+    builder.addAll(AssemblySequenceFormatter.format(SAVE_ADDRESS_TO_D_FORMAT, text, value));
   }
 
   private void pushFrame(ImmutableList.Builder<String> builder) {
     builder.add("// push frame");
-    pushAddressLabelText(ADDRESS_IDENTIFIER_LOCAL, builder);
-    pushAddressLabelText(ADDRESS_IDENTIFIER_ARG, builder);
-    pushAddressLabelText(ADDRESS_IDENTIFIER_THIS, builder);
-    pushAddressLabelText(ADDRESS_IDENTIFIER_THAT, builder);
+    pushAddressLabelText(ADDRESS_IDENTIFIER_LOCAL, SHOULD_DEREFERENCE, builder);
+    pushAddressLabelText(ADDRESS_IDENTIFIER_ARG, SHOULD_DEREFERENCE, builder);
+    pushAddressLabelText(ADDRESS_IDENTIFIER_THIS, SHOULD_DEREFERENCE, builder);
+    pushAddressLabelText(ADDRESS_IDENTIFIER_THAT, SHOULD_DEREFERENCE, builder);
   }
 
   private void updateState(ParsedFunctionParams parsedFunction, Builder<String> builder) {

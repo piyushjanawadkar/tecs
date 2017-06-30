@@ -13,7 +13,7 @@ public class PushValueInDTranslator implements AssemblyTranslator {
       "A=M",
       "M=D",
       "@SP",
-      "%sM=M+1"
+      "M%s=M+1"
   );
 
   private final boolean saveUpdatedSPInD;
