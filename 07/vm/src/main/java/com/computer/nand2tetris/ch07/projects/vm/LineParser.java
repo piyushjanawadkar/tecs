@@ -15,6 +15,8 @@ class LineParser {
   private static final String TERM_FUNCTION_CALL = "call";
   private static final String TERM_LABEL = "label";
   private static final String TERM_GOTO = "goto";
+  private static final String TERM_IF_GOTO = "if-goto";
+  private static final String TERM_RETURN = "return";
 
   private static final ImmutableMap<String, ParsedLine.LineType> lineTypeByTerm =
       ImmutableMap.<String, ParsedLine.LineType>builder()
@@ -30,10 +32,11 @@ class LineParser {
           .put("eq", ParsedLine.LineType.COMMAND_EQ)
           .put("gt", ParsedLine.LineType.COMMAND_GT)
           .put(TERM_FUNCTION, ParsedLine.LineType.FUNCTION_DEFINITION)
-          .put("return", ParsedLine.LineType.FUNCTION_RETURN)
+          .put(TERM_RETURN, ParsedLine.LineType.FUNCTION_RETURN)
           .put("call", ParsedLine.LineType.FUNCTION_CALL)
           .put(TERM_LABEL, ParsedLine.LineType.LABEL)
           .put(TERM_GOTO, ParsedLine.LineType.GOTO)
+          .put(TERM_IF_GOTO, ParsedLine.LineType.IF_GOTO)
           .build();
 
   private static final ImmutableMap<String, ParsedLocation.SegmentType> segmentTypeByTerm =
@@ -48,7 +51,12 @@ class LineParser {
           .put("constant", ParsedLocation.SegmentType.SEGMENT_CONSTANT)
           .build();
 
-  private int nextIndex = 0;
+  private int nextIndex;
+  Optional<ParsedFunctionParams> contextFunction;
+
+  LineParser() {
+    resetState();
+  }
 
   private static ParsedLocation createParsedLocation(String[] terms) {
     Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
@@ -89,18 +97,20 @@ class LineParser {
     Optional<ParsedFunctionParams> parsedFunctionParams = Optional.absent();
     if (firstTerm.equals(TERM_FUNCTION)) {
       parsedFunctionParams = Optional.of(createParsedFunctionParams(terms));
+      contextFunction = parsedFunctionParams;
     } else if (firstTerm.equals(TERM_FUNCTION_CALL)) {
       parsedFunctionParams = Optional.of(createParsedFunctionCallParams(terms));
     }
 
     Optional<Label> label = Optional.absent();
-    if (firstTerm.equals(TERM_LABEL) || firstTerm.equals(TERM_GOTO)) {
-      label = Optional.of(Labels.labelOf(fileBaseName, terms[1]));
+    if (firstTerm.equals(TERM_LABEL) || firstTerm.equals(TERM_GOTO) || firstTerm
+        .equals(TERM_IF_GOTO)) {
+      label = Optional.of(Labels.prefixedLabelOf(fileBaseName, terms[1]));
     }
 
     return ParsedLine
         .create(line, command, parsedLocation, nextIndex++, fileBaseName, parsedFunctionParams,
-            label);
+            label, contextFunction);
   }
 
   private ParsedFunctionParams createParsedFunctionCallParams(String[] terms) {
@@ -121,13 +131,14 @@ class LineParser {
     if (line.isEmpty()) {
       return ParsedLine
           .create(line, ParsedLine.LineType.BLANK_LINE, Optional.absent(), nextIndex++,
-              fileBaseName, Optional.absent(), Optional.absent());
+              fileBaseName, Optional.absent(), Optional.absent(), Optional.absent());
     }
 
     return parseStatement(line, fileBaseName);
   }
 
-  void resetIndex() {
+  void resetState() {
     nextIndex = 0;
+    contextFunction = Optional.absent();
   }
 }

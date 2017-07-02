@@ -14,6 +14,6 @@ public class GotoTranslator implements AssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    return AssemblySequenceFormatter.format(GOTO_FORMAT, parsedLine.label().get().text());
+    return AssemblySequenceFormatter.format(GOTO_FORMAT, Labels.gotoLabelOf(parsedLine).text());
   }
 }

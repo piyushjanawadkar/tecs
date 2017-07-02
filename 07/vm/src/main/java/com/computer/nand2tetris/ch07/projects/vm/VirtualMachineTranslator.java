@@ -32,7 +32,7 @@ class VirtualMachineTranslator {
 
   public void translate(ImmutableList<InputFile> inputFiles) {
     inputFiles.stream().forEachOrdered(f -> {
-      lineParser.resetIndex();
+      lineParser.resetState();
       translateFile(f);
     });
   }

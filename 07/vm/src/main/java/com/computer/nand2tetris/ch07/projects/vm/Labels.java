@@ -5,19 +5,42 @@ package com.computer.nand2tetris.ch07.projects.vm;
  */
 final class Labels {
 
+  private static final String SYS_INIT = "Sys.init";
+
   private Labels() {
   }
 
-  static Label labelOf(String fileBaseName, String text) {
-    return Label.create(String.format("%s.%s", fileBaseName, text));
-  }
-
   static Label functionNameLabelOf(ParsedLine parsedLine) {
-    return labelOf(parsedLine.fileBaseName(), parsedLine.function().get().name());
+    String functionName = getFunctionName(parsedLine);
+    if (functionName.equals(SYS_INIT)) {
+      return Label.create(functionName);
+    }
+    return fileNamePrefixedLabelOf(parsedLine, getFunctionName(parsedLine));
   }
 
   static Label postFunctionCallLabelOf(ParsedLine parsedLine) {
-    return labelOf(parsedLine.fileBaseName(),
-        String.format("Aft.%s", parsedLine.function().get().name()));
+    Label functionCallLabel = prefixedLabelOf(getFunctionName(parsedLine),
+        Integer.toString(parsedLine.index()));
+    Label postFunctionCallLabel = prefixedLabelOf("Aft", functionCallLabel.text());
+    return fileNamePrefixedLabelOf(parsedLine, postFunctionCallLabel.text());
+  }
+
+  static Label gotoLabelOf(ParsedLine parsedLine) {
+    String contextFunctionName = parsedLine.contextFunction().get().name();
+    String unqualifiedLabelText = parsedLine.label().get().text();
+    return fileNamePrefixedLabelOf(parsedLine,
+        prefixedLabelOf(contextFunctionName, unqualifiedLabelText).text());
+  }
+
+  static Label prefixedLabelOf(String prefix, String text) {
+    return Label.create(String.format("%s.%s", prefix, text));
+  }
+
+  static Label fileNamePrefixedLabelOf(ParsedLine parsedLine, String text) {
+    return prefixedLabelOf(parsedLine.fileBaseName(), text);
+  }
+
+  private static String getFunctionName(ParsedLine parsedLine) {
+    return parsedLine.function().get().name();
   }
 }

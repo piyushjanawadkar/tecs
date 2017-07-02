@@ -11,8 +11,8 @@ abstract class ParsedLine {
 
   static ParsedLine create(String line, ParsedLine.LineType type,
       Optional<ParsedLocation> location, int index, String fileBaseName,
-      Optional<ParsedFunctionParams> function, Optional<Label> label) {
-    return new AutoValue_ParsedLine(line, type, location, index, fileBaseName, function, label);
+      Optional<ParsedFunctionParams> function, Optional<Label> label, Optional<ParsedFunctionParams> contextFunction) {
+    return new AutoValue_ParsedLine(line, type, location, index, fileBaseName, function, label, contextFunction);
   }
 
   abstract String line();
@@ -29,10 +29,12 @@ abstract class ParsedLine {
 
   abstract Optional<Label> label();
 
+  abstract Optional<ParsedFunctionParams> contextFunction();
+
   public String toString() {
     return String
-        .format("%s:%d %s: { %s, %s, %s }", fileBaseName(), index(), line(), type(), location(),
-            function());
+        .format("%s:%d %s: { %s, %s, %s, %s }", fileBaseName(), index(), line(), type(), location(),
+            function(), contextFunction());
   }
 
   enum LineType {
@@ -49,6 +51,10 @@ abstract class ParsedLine {
     COMMAND_EQ,
     COMMAND_GT,
     FUNCTION_DEFINITION,
-    FUNCTION_RETURN, FUNCTION_CALL, LABEL, GOTO,
+    FUNCTION_RETURN,
+    FUNCTION_CALL,
+    LABEL,
+    GOTO,
+    IF_GOTO,
   }
 }

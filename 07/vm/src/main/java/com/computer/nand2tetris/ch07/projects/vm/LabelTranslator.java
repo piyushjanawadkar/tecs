@@ -9,6 +9,6 @@ public class LabelTranslator implements AssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    return ImmutableList.of(parsedLine.label().get().generateDefinitionText());
+    return ImmutableList.of(Labels.gotoLabelOf(parsedLine).generateDefinitionText());
   }
 }

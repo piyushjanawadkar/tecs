@@ -78,6 +78,7 @@ public class AssemblyTranslatorImpl implements AssemblyTranslator {
 
           .put(ParsedLine.LineType.LABEL, new LabelTranslator())
           .put(ParsedLine.LineType.GOTO, new GotoTranslator())
+          .put(ParsedLine.LineType.IF_GOTO, new IfGotoTranslator())
 
           .build();
 
