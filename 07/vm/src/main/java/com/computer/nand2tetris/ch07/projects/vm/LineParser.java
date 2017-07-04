@@ -33,7 +33,7 @@ class LineParser {
           .put("gt", ParsedLine.LineType.COMMAND_GT)
           .put(TERM_FUNCTION, ParsedLine.LineType.FUNCTION_DEFINITION)
           .put(TERM_RETURN, ParsedLine.LineType.FUNCTION_RETURN)
-          .put("call", ParsedLine.LineType.FUNCTION_CALL)
+          .put(TERM_FUNCTION_CALL, ParsedLine.LineType.FUNCTION_CALL)
           .put(TERM_LABEL, ParsedLine.LineType.LABEL)
           .put(TERM_GOTO, ParsedLine.LineType.GOTO)
           .put(TERM_IF_GOTO, ParsedLine.LineType.IF_GOTO)
@@ -50,9 +50,8 @@ class LineParser {
           .put("static", ParsedLocation.SegmentType.SEGMENT_STATIC)
           .put("constant", ParsedLocation.SegmentType.SEGMENT_CONSTANT)
           .build();
-
-  private int nextIndex;
   Optional<ParsedFunctionParams> contextFunction;
+  private int nextIndex;
 
   LineParser() {
     resetState();
@@ -105,7 +104,7 @@ class LineParser {
     Optional<Label> label = Optional.absent();
     if (firstTerm.equals(TERM_LABEL) || firstTerm.equals(TERM_GOTO) || firstTerm
         .equals(TERM_IF_GOTO)) {
-      label = Optional.of(Labels.prefixedLabelOf(fileBaseName, terms[1]));
+      label = Optional.of(Label.create(terms[1]));
     }
 
     return ParsedLine
@@ -114,13 +113,15 @@ class LineParser {
   }
 
   private ParsedFunctionParams createParsedFunctionCallParams(String[] terms) {
-    Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
+    Preconditions
+        .checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", String.join(",", terms));
     Integer numArgs = Integer.valueOf(terms[2]);
     return ParsedFunctionParams.create(terms[1], Optional.of(numArgs), Optional.absent());
   }
 
   private ParsedFunctionParams createParsedFunctionParams(String[] terms) {
-    Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s", terms.toString());
+    Preconditions.checkArgument(terms.length == 3, "Expected 3 terms. Found: %s",
+        String.join(",", terms));
     Integer numLocalArgs = Integer.valueOf(terms[2]);
     return ParsedFunctionParams.create(terms[1], Optional.absent(), Optional.of(numLocalArgs));
   }

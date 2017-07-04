@@ -12,10 +12,7 @@ final class Labels {
 
   static Label functionNameLabelOf(ParsedLine parsedLine) {
     String functionName = getFunctionName(parsedLine);
-    if (functionName.equals(SYS_INIT)) {
-      return Label.create(functionName);
-    }
-    return fileNamePrefixedLabelOf(parsedLine, getFunctionName(parsedLine));
+    return Label.create(functionName);
   }
 
   static Label postFunctionCallLabelOf(ParsedLine parsedLine) {
@@ -28,19 +25,22 @@ final class Labels {
   static Label gotoLabelOf(ParsedLine parsedLine) {
     String contextFunctionName = parsedLine.contextFunction().get().name();
     String unqualifiedLabelText = parsedLine.label().get().text();
-    return fileNamePrefixedLabelOf(parsedLine,
-        prefixedLabelOf(contextFunctionName, unqualifiedLabelText).text());
+    return prefixedLabelOf(contextFunctionName, unqualifiedLabelText);
   }
 
-  static Label prefixedLabelOf(String prefix, String text) {
+  private static Label prefixedLabelOf(String prefix, String text) {
     return Label.create(String.format("%s.%s", prefix, text));
   }
 
-  static Label fileNamePrefixedLabelOf(ParsedLine parsedLine, String text) {
+  private static Label fileNamePrefixedLabelOf(ParsedLine parsedLine, String text) {
     return prefixedLabelOf(parsedLine.fileBaseName(), text);
   }
 
   private static String getFunctionName(ParsedLine parsedLine) {
     return parsedLine.function().get().name();
+  }
+
+  public static Label sysInitLabel() {
+    return Label.create(SYS_INIT);
   }
 }
