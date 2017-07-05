@@ -12,7 +12,6 @@ public class SubstituteValuesAssemblyTranslator implements AssemblyTranslator {
 
   private static final ImmutableMap<String, Function<ParsedLine, String>> dictionary =
       ImmutableMap.<String, Function<ParsedLine, String>>builder()
-          .put("{LINENUM}", l -> String.valueOf(l.index()))
           .put("{RELATIONAL_OP_LABEL_REFERENCE}",
               l -> Labels.relationalOpLabelOf(l).generateReferenceText())
           .put("{RELATIONAL_OP_DONE_LABEL_REFERENCE}",
