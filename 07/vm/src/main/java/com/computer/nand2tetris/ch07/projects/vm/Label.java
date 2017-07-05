@@ -7,6 +7,7 @@ import com.google.auto.value.AutoValue;
  */
 @AutoValue
 abstract class Label {
+
   static Label create(String text) {
     return new AutoValue_Label(text);
   }
@@ -15,5 +16,9 @@ abstract class Label {
 
   public String generateDefinitionText() {
     return String.format("(%s)", text());
+  }
+
+  public String generateReferenceText() {
+    return String.format("@%s", text());
   }
 }

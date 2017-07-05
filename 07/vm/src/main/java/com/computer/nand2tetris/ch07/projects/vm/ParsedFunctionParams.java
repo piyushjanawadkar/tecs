@@ -9,7 +9,9 @@ import com.google.common.base.Optional;
  */
 @AutoValue
 abstract class ParsedFunctionParams {
-  static ParsedFunctionParams create(String name, Optional<Integer> numArgs, Optional<Integer> numLocalArgs) {
+
+  static ParsedFunctionParams create(String name, Optional<Integer> numArgs,
+      Optional<Integer> numLocalArgs) {
     return new AutoValue_ParsedFunctionParams(name, numArgs, numLocalArgs);
   }
 

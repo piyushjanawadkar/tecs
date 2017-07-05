@@ -35,7 +35,9 @@ abstract class ParsedLine {
 
   public String toString() {
     return String
-        .format("%s:%d %s: { %s, %s, %s, %s, %s }", fileBaseName(), index(), line(), type(),
+        .format(
+            "%s:%d %s: { type: %s, location: %s, function: %s, label: %s, context_function: %s }",
+            fileBaseName(), index(), line(), type(),
             location(),
             function(), label(), contextFunction());
   }

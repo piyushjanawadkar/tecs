@@ -29,7 +29,7 @@ public class FunctionCallTranslator implements AssemblyTranslator {
   private static final int SAVED_FRAME_SIZE = 5;  // return_address, LCL, ARG, THIS, THAT
 
   private static final ImmutableList<String> JUMP_TO_FUNCTION_FORMAT = ImmutableList.of(
-      "// jump to return address",
+      "// jump to called function",
       "@%s",
       "0;JMP"
   );
