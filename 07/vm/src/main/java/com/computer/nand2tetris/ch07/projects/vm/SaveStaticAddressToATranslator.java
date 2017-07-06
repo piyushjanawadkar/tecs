@@ -9,7 +9,7 @@ public class SaveStaticAddressToATranslator implements AssemblyTranslator {
 
   @Override
   public ImmutableList<String> translate(ParsedLine parsedLine) {
-    return ImmutableList.of(
-        String.format("@%s.%d", parsedLine.fileBaseName(), parsedLine.location().get().offset()));
+    Label label = Labels.staticLabelOf(parsedLine);
+    return ImmutableList.of(label.generateReferenceText());
   }
 }

@@ -48,6 +48,11 @@ final class Labels {
         generateRelationalLabelText(RELATIONAL_OP_DONE_QUALIFIER_TEXT, parsedLine.index()));
   }
 
+  static Label staticLabelOf(ParsedLine parsedLine) {
+    return fileNamePrefixedLabelOf(parsedLine,
+        String.valueOf(parsedLine.location().get().offset()));
+  }
+
   private static Label prefixedLabelOf(String prefix, String text) {
     return Label.create(String.format("%s.%s", prefix, text));
   }
