@@ -35,10 +35,15 @@ class IOPathsGenerator {
 
   private static String generateOutputPath(String inputLocation) {
     if (!hasVMSuffix(inputLocation)) {
-      return inputLocation + ASM_FILE_EXTENSION;
+      String fileName = extractBaseName(inputLocation) + ASM_FILE_EXTENSION;
+      return extendPath(inputLocation, fileName);
     }
 
     return replaceExtension(inputLocation, VM_FILE_EXTENSION, ASM_FILE_EXTENSION);
+  }
+
+  private static String extendPath(String path, String pathComponent) {
+    return new File(path, pathComponent).getPath();
   }
 
   private static String getExtensionRegex(String extension) {
@@ -55,8 +60,12 @@ class IOPathsGenerator {
   }
 
   private static String extractFileBaseName(String path) {
-    String fileName = new File(path).getName();
+    String fileName = extractBaseName(path);
     return replaceExtension(fileName, VM_FILE_EXTENSION, "");
+  }
+
+  private static String extractBaseName(String path) {
+    return new File(path).getName();
   }
 
   private static String replaceExtension(String path, String oldExtension, String newExtension) {

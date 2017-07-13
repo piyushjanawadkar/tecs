@@ -1,10 +1,6 @@
 package com.computer.nand2tetris.ch07.projects.vm;
 
-import com.google.common.collect.Iterables;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -20,7 +16,7 @@ public class Main {
         createWriter(ioPaths.outputPath()),
         new LineParser(),
         new AssemblyTranslatorImpl());
-    translator.translate(Iterables.getOnlyElement(ioPaths.inputFiles()));
+    translator.translate(ioPaths.inputFiles());
     translator.done();
   }
 

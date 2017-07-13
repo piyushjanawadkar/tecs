@@ -15,14 +15,14 @@ public class RelationalOpAssemblyTranslator implements AssemblyTranslator {
       "A=A-1",
       "D=M-D  // D has the difference of popped elements",
 
-      "@Label%s{LINENUM}",
+      "{RELATIONAL_OP_LABEL_REFERENCE}",
       "D;%s",
       "D=%s",
-      "@Labeldone{LINENUM}",
+      "{RELATIONAL_OP_DONE_LABEL_REFERENCE}",
       "0;JMP",
-      "(Label%s{LINENUM})",
+      "{RELATIONAL_OP_LABEL_DEFINITION}",
       "D=%s",
-      "(Labeldone{LINENUM})  // D has the output of op",
+      "{RELATIONAL_OP_DONE_LABEL_DEFINITION}  // D has the output of op",
 
       "@SP",
       "A=M-1",
@@ -44,8 +44,7 @@ public class RelationalOpAssemblyTranslator implements AssemblyTranslator {
     this.consequentValue = consequentValue;
     this.alternateValue = alternateValue;
     substitutor = new SubstituteValuesAssemblyTranslator(RELATIONAL_OP_ASM_SEQUENCE,
-        jumpInstruction.toLowerCase(), jumpInstruction, alternateValue,
-        jumpInstruction.toLowerCase(), consequentValue);
+        jumpInstruction, alternateValue, consequentValue);
   }
 
   @Override
