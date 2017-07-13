@@ -54,7 +54,7 @@ final class Labels {
   }
 
   private static Label prefixedLabelOf(String prefix, String text) {
-    return Label.create(String.format("%s.%s", prefix, text));
+    return Label.create(String.format("%s$%s", prefix, text));
   }
 
   private static Label fileNamePrefixedLabelOf(ParsedLine parsedLine, String text) {
